@@ -256,6 +256,7 @@ server {
 				- set 'PEERDNS="no"'
 				- add/replace 'DNS1=8.8.8.8'
 			+ reboot & try $ ping xmlrpc.rhn.redhat.com
-
+	+ 502 error from nginx - bad gateway
+		- setsebool httpd_can_network_connect on -P
 
 
