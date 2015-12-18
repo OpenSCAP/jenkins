@@ -160,8 +160,9 @@ Note:
 + What we need
 	+ Install nginx
 	+ Create folder available from http to allow letsencrypt script to public authentication files
-	+ create nginx configuration
+	+ Create nginx configuration
 	+ Get certificate/Create jenkins-job to renew certificates regularly
+	+ *Check permissions of generated files which should be private*
 + ~~Self-signed certificate~~
 	+ We have started to use https://letsencrypt.org/ certificate. If you still want to use self-signed certificate, use some older git revision of this file.
 	+
