@@ -211,6 +211,12 @@ server {
 + **Enable and run nginx service**
 	+ ```# systemctl enable nginx; systemctl start nginx```
 
++ **Provide redirect to static file**
+	+  We want to redirect some /lets-encrypt location to /lets-encrypt/test file
+	+  Set right linux rights to file/directory
+	+  ```sudo chcon -Rt httpd_sys_content_t /lets-encrypt/``` -- allow access(selinux) to directory from nginx
+	+  to ```/etc/nginx/conf.d/jenkins.conf``` add ```location /lets-encrypt { alias /lets-encrypt/test;}```
+
 ## 6. Create new Jobs
 + **Pull requests**
 	+ Build Triggers: GitHub Pull Request Builder
