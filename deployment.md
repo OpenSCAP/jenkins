@@ -157,18 +157,33 @@ Note:
 		+ ``` # systemctl enable sendmail ; # systemctl start sendmail ```
 
 ## 5. Add Https support
++ What we need
+	+ Install nginx
+	+ Create folder available from http to allow letsencrypt script to public authentication files
+	+ create nginx configuration
+	+ Get certificate/Create jenkins-job to renew certificates regularly
++ ~~Self-signed certificate~~
+	+ We have started to use https://letsencrypt.org/ certificate. If you still want to use self-signed certificate, use some older git revision of this file.
+	+
++ 5.1 Lets encrypt certificate
+	+ Download let-encrypt
+		+ ```git clone https://github.com/letsencrypt/letsencrypt``` - use some persistent folder (we want to use this repo also for regular renews)
+	+ We will use webroot authentification, so we don't have to stop our nginx server to authenticate.
+	+ Create folder ```/lets-encrypt```
+	+ ```sudo chcon -Rt httpd_sys_content_t /lets-encrypt/``` set selinux permission
+	+ Create the script to renew certificate - chmod 500 to this file - user jenkins should not be able to modify this file
+	+ ```$PATH_TO_REPO/letsencrypt-auto certonly --webroot -w /lets-encrypt/ -d jenkins.open-scap.org --renew-by-default```
+	+ Add jenkins to sudoers to allow run the script with sudo/without password
+	+ Currently lets-encrypt has *beta* program, so we have to renew certificate at least every 3 months. You can create jenkins-job to solve this as well as yum update.
+	+ *Useful links*
+		+ http://letsencrypt.readthedocs.org/en/latest/using.html
+		+ https://blog.rudeotter.com/lets-encrypt-ssl-certificate-nginx-ubuntu/
+
 + **Add Nginx**
 	+ http://wiki.nginx.org/Install#Official_Red_Hat.2FCentOS_packages
-+ **Create certificate**
-	+ https://www.digitalocean.com/community/tutorials/how-to-create-an-ssl-certificate-on-nginx-for-ubuntu-14-04
-	+ store files into /etc/nginx/ssl/server.*
-	+ Deny access to keys
-		+ ```# chown root server.key*```
-		+ ```# chmod 600 server.key*```
 + **Configure Nginx**
 	+ Add file to /etc/nginx/conf.d/jenkins.conf
 ```
-
 upstream jenkins {
   server 127.0.0.1:8080 fail_timeout=0;
 }
@@ -180,21 +195,31 @@ server {
 }
 
 server {
-  listen 443 default ssl;
+  listen 443 ssl spdy;
   server_name 209.132.179.114 jenkins.open-scap.org;
+  ssl_certificate /etc/letsencrypt/live/jenkins.open-scap.org/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/jenkins.open-scap.org/privkey.pem;
 
-  ssl_certificate           /etc/nginx/ssl/server.crt;
-  ssl_certificate_key       /etc/nginx/ssl/server.key;
+  ssl_session_timeout  60m;
+  ssl_protocols  TLSv1.1 TLSv1.2;
 
-  ssl_session_timeout  5m;
-  ssl_protocols  SSLv3 TLSv1;
-  ssl_ciphers HIGH:!ADH:!MD5;
-  ssl_prefer_server_ciphers on;
+  ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK';
+
+ssl_prefer_server_ciphers on;
+
+  add_header Strict-Transport-Security max-age=15768000;
 
   # auth_basic            "Restricted";
   # auth_basic_user_file  /home/jenkins/htpasswd;
 
-  location / {
+  ssl_trusted_certificate /etc/letsencrypt/live/jenkins.open-scap.org/chain.pem;
+  resolver 8.8.8.8 8.8.4.4 valid=86400;
+  resolver_timeout 10;
+
+  # lets-encrypt certificate
+  location  /.well-known/ { alias /lets-encrypt/.well-known/;}
+
+location / {
     proxy_set_header Host $http_host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-Proto https;
@@ -206,16 +231,12 @@ server {
     proxy_pass http://jenkins;
   }
 }
+
 ```
++ Run the script
 
 + **Enable and run nginx service**
 	+ ```# systemctl enable nginx; systemctl start nginx```
-
-+ **Provide redirect to static file**
-	+  We want to redirect some /lets-encrypt location to /lets-encrypt/test file
-	+  Set right linux rights to file/directory
-	+  ```sudo chcon -Rt httpd_sys_content_t /lets-encrypt/``` -- allow access(selinux) to directory from nginx
-	+  to ```/etc/nginx/conf.d/jenkins.conf``` add ```location /lets-encrypt { alias /lets-encrypt/test;}```
 
 ## 6. Create new Jobs
 + **Pull requests**
