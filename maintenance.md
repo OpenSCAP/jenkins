@@ -22,3 +22,9 @@ master $ cat /etc/hosts # to get all slaves names
 ```
 
 Jenkins slaves are adressed via hostnames in /etc/hosts, it is better to remember and we can manage it from one place.
+
+Rebooting slaves
+----------------
+Sometimes the slaves can get stuck or start throwing strange Java exceptions. The most probably solution to both is rebooting the machine.
+
+SSH into the slave using instructions in the previous section, then type `sudo reboot`. Wait until the machines restart, then login to Jenkins master and verify that the machines are available now. You can manually tell Jenkins master to connect the slaves and speed-up the process, login to Jenkins master, go to https://jenkins.open-scap.org/computer/, select the slave that needs restarting and press "Launch".
