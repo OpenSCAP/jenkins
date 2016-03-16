@@ -130,6 +130,8 @@ Note:
 	+ set: *PasswordAuthentication yes*
 	+ restart sshd ```# systemctl restart sshd```
 + Install java
++ 	+ ```yum install wget```
++ Install java
 	+ ```# dnf install "java-*-openjdk``` or ```# yum install java```
 	+ Jenkins can install java on slave itself, but we want to have Java as package maintaned by yum/dnf.
 	+ *Fedora packages*
