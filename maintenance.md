@@ -1,5 +1,9 @@
 Maintenance
 ===========
+Update systems
+--------------
+We run dnf/yum on our machines every weekend. This should be done by [jenkins jobs](https://jenkins.open-scap.org/view/System%20updates/). Make sure that the jobs are green and don't have results older than week.
+When jenkins packages are updated on master, job will not finish and we don't know results. It is reason why we run later ```yum check-update``` to ensure, that system use latest packages.
 
 Updating plugins
 ----------------
