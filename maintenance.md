@@ -6,6 +6,10 @@ Updating plugins
 Although Jenkins is updated regularly as *yum* package, plugins are not updated in this way.
 You have to use plugin manager to update plugins. [jenkins.open-scap.org/pluginManager](https://jenkins.open-scap.org/pluginManager/)
 
+Certificate
+-----------
+Currently we use certificate [Lets' Encrypt](https://letsencrypt.org/). They require to renewal of certificate at least every 3 months (http://letsencrypt.readthedocs.org/en/latest/using.html#renewal). This should be done by jenkins job (https://jenkins.open-scap.org/view/System%20updates/job/UPDATE-MASTER-lets-encrypt/). Please make sure, that the job isn't failing.
+
 Do snapshots
 ------------
 It's better to do snapshots of whole machines. Jenkins slave can be set up relatively quickly, but setting up of jenkins master can cause lots of problems. Snapshots are performed from openstack.org cloud. Please check that snapshot was created properly.
