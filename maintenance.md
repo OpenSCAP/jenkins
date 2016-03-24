@@ -12,7 +12,7 @@ You have to use plugin manager to update plugins. [jenkins.open-scap.org/pluginM
 
 Certificate
 -----------
-Currently we use certificate [Lets' Encrypt](https://letsencrypt.org/). They require to renewal of certificate at least every 3 months (http://letsencrypt.readthedocs.org/en/latest/using.html#renewal). This should be done by jenkins job (https://jenkins.open-scap.org/view/System%20updates/job/UPDATE-MASTER-lets-encrypt/). Please make sure, that the job isn't failing.
+Currently we use certificate [Lets' Encrypt](https://letsencrypt.org/). They require to renewal of certificate at least every [3 months](http://letsencrypt.readthedocs.org/en/latest/using.html#renewal). This should be done by [jenkins job](https://jenkins.open-scap.org/view/System%20updates/job/UPDATE-MASTER-lets-encrypt/). Please make sure, that the job isn't failing.
 
 Snapshots
 ------------
