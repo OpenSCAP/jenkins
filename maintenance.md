@@ -31,6 +31,19 @@ master $ cat /etc/hosts # to get all slaves names
 
 Jenkins slaves are adressed via hostnames in /etc/hosts, it is better to remember and we can manage it from one place.
 
+Cleanning up space
+------------------
+The machine may run low on disk storage, when this happens jobs start to fail.
+All you need to do is clean up space in the machine, i.e. clean data from yum, or delete old workspaces.
+
+### Corner Case ###
+When the job that updates the machine fails, and there is an update for java. You may fall into a strange situation.
+
+Eventually the machine will be cleaned, and have enough disk space to work, but the Master Node may still be reporting not enough disk space.
+What happens is that if the java version expected by Master Node does not match the one installed in the Slave Node, the slave won't start. And Master will collect the error log from the machine to show admins what is happening. But as the slave didn't start, it did not update the error log, so Master node will report the slave as not having enough disk space, which is inaccurate.
+
+To fix this just execute a `yum update` manually and reboot the node.
+
 Rebooting slaves
 ----------------
 Sometimes the slaves can get stuck or start throwing strange Java exceptions. The most probably solution to both is rebooting the machine.
