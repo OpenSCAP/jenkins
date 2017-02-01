@@ -153,7 +153,10 @@ Note:
 	+ asciidoctor on RHEL6/RHEL7
 		+ ``` # yum install rubygems && gem install asciidoc ```
 		+ ``` # yum install rubygems && gem install asciidoctor ```
-
+	+ scap-workbench
+		+ ``` # dnf install gcc-c++ ```
+	+ openscap-daemon
+		+ ``` # dnf install dbus-python gobject-introspection python3-gobject-base pygobject2-devel pygobject3-devel python3-dbus```
 
 	+ Enable/Start sendmail service ( mitre test requires it)
 		+ ``` # systemctl enable sendmail ; # systemctl start sendmail ```
