@@ -21,50 +21,60 @@ Note:
 		+ "dummy" computers doing the hard work (compiling, testing)
 
 
-## 1. Get some machines
+## Get some machines
 + You need some machines to do testing.
 + Usually you want to have different systems to do tests.
 + Theoretically you can use bare metal machines, virtual machines, containers etc.
-+ How to get machines on OpenStack:
-	1. (Get OpenStack acc and login)
-	2. *Import your key* (OS: Access & Security / Key Pairs tab) before you create any machine!
-		+ Usually you don't know any password on the virtual machine
-		+ This option injects your keys into machine during its creation process.
-	3. Create master and slaves machines (example)
-		+ OS: Instances =>
-			+ Launch Instance
-				+ Flavor: m1.large
-			+ Boot from image
-				+ *Fedora cloud 22*
-			+ Launch
-	4. Now you have machine somewhere in the cloud and you have to get acces to the machine:
-		+ Get *public IP* (at least for master)
-			+ OS: Acess & Security / Floating IPs > Allocate IP to Project
-			+ OS: Select IP -> Associate -> select instance
-		+ *Manage access to machines* (= open ports)
-			+ OS: Acess & Security / Securit Groups
-				+ You probably need to create Rules (OS: Groups/Rules) which enable you access to *ssh*, *http*s.
-			+ You can restrict SSH only for Red Hat Subnet etc.
-			+ **Jenkins** master needs (ssh/tcp) :56917 port allowed
-				+ You can connect to this port using ssh.
-				+ Jenkins provides you tunnel to slaves(last build, etc) via this port.
- 
 
-## 2. Connect to your Master
- + Usually you can simply connect using ```ssh cloud-user@<master ip>```
-	+ 'cloud-user' has imported your public key.
- + (maybe some images have different settings - you have to use google etc.)
- 
- 
-## 3. Install Jenkins software on your Master
+### How to get machines on OpenStack
+1. (Get OpenStack acc and login)
+1. *Import your key* (OS: Access & Security / Key Pairs tab) before you create any machine!
+    + Usually you don't know any password on the virtual machine
+    + This option injects your keys into machine during its creation process.
+    + Might be good idea to import key from Master node
+1. Create master and slaves machines (example)
+    + OS: Instances =>
+        + Launch Instance
+            + Flavor: m1.large
+        + Boot from image
+            + *Fedora cloud 22*
+        + Launch
+1. Now you have machine somewhere in the cloud and you have to get access to the machine:
+    + Get *public IP* (at least for master)
+        + OS: Access & Security / Floating IPs > Allocate IP to Project
+        + OS: Select IP -> Associate -> select instance
+    + *Manage access to machines* (= open ports)
+        + OS: Access & Security / Security Groups
+            + You probably need to create Rules (OS: Groups/Rules) which enable you access to *ssh*, *http*s.
+        + You can restrict SSH only for Red Hat Subnet etc.
+        + **Jenkins** master needs (ssh/tcp) :56917 port allowed
+            + You can connect to this port using ssh.
+            + Jenkins provides you tunnel to slaves(last build, etc) via this port.
+
+### How to connect to the machine
++ Note: depending on the image used for installation, node might be created with user other than 'cloud-user'. Check console output, and search for part where public key is imported to get a username.
+#### Connect to your Master
+Master has public IP address, so simply using ```ssh cloud-user@<master ip>``` should be enough. 'cloud-user' has your public key imported, and has sudo access.
+
+#### Connect to a slave machine
+Slave machines usually do not hold public IP, Master node has access to them, though. That means there are at least three ways how to access the machine.
+1. Assign *public* (floating) *IP* to our slave using OpenStack
+1. Use *port forwarding* from master to slave (use your public key)
+    + use ```ssh -L 2222:<slave-ip>:22 cloud-user@<master-ip>``` forward ssh port to slave
+    + connect to slave via redirected port ```ssh cloud-user@localhost -p 2222```
+1. Connect directly *from master to slave*
+    + for this, we need to import master public key into slave authorized_keys first
+
+
+## Configuration of Master node
+### Install Jenkins software
 - add repo https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Red+Hat+distributions
 - ```# yum install jenkins```
 - start and enable jenkins service
 	- ```# systemctl enable jenkins; systemctl start jenkins```
 
-
-## 4. Configure jenkins
-### 4.1 Important files & paths
+### Configure Jenkins
+#### Important files & paths
  - **/var/lib/jenkins/**
 	- Complete configuration folder storage
  - **/var/lib/jenkins/config.xml**
@@ -73,9 +83,9 @@ Note:
 		- If you completely lose admin rights for settings of Jenkins, it is file which you need to modify.
  - **/usr/lib/jenkins/jenkins.war**
 	- Jenkins java archive - probably you don't want to modify/update it manually
- - *TIP*: when you lose root acces and need to backup jenkins settings files, you can run job on master(=as 'jenkins' user) to get access to config files.
- 
-### 4.2 Plugins
+ - *TIP*: when you lose root access and need to backup jenkins settings files, you can run job on master(=as 'jenkins' user) to get access to config files.
+
+#### Plugins
  + Jenkins provides some set of default plugins
  + "Important" plugins to install:
 	+ *Github Authentication plugin*
@@ -88,7 +98,8 @@ Note:
 	+ *Role-based Authorization Strategy*
 		+ Allow manage user rights as roles
 
-### 4.3 GitHub Integration
+#### GitHub Integration
+
  + *GitHub Auth*
 	+ Settings:
 		+ Jenkins/Configure Global Security/Access Control/Security Realm/
@@ -109,82 +120,31 @@ Note:
 		+ *GitHub plugin*
 			+ hook url: *https://jenkins.open-scap.org/github-webhook/*
 			+ Add service Jenkins (GitHub plugin)
-			
- 
-### 4.4 Access to slaves
-+ We have access to master using public IP, but not to slaves. Fortunatelly master has access to slaves.
-+ We have at least 3 ways how to access to slaves:
-	+ Assign *public* (floating) *IP* to our slave using OpenStack
-	+ Use *port forwarding* from master to slave (use your public key)
-		+ use ```ssh -L 2222:172.18.152.10:22 cloud-user@209.132.179.114``` forward ssh port to slave
-		+ connect to slave via redirected port ```ssh cloud-user@localhost -p 2222``` 
-	+ Connect *from master to slave*
-		+ First, we need to import master public key into slave authorized_keys
-	
-### 4.5 Slave setup
-+ Create **jenkins** user
-	+ ```# adduser jenkins```
-	+ ```# passwd jenkins``` and type password
-+ Setup ssh to accept password authentification
-	+ sudo vi */etc/ssh/sshd_config*
-	+ set: *PasswordAuthentication yes*
-	+ restart sshd ```# systemctl restart sshd```
-+ Install java
-+ 	+ ```yum install wget```
-+ Install java
-	+ ```# dnf install "java-*-openjdk``` or ```# yum install java```
-	+ Jenkins can install java on slave itself, but we want to have Java as package maintaned by yum/dnf.
-	+ *Fedora packages*
-		+ SCAP Workbench dependencies
-			+ ```# dnf install rubygem-asciidoctor openscap-devel zip```
-			+ (master branch)
-				+ ```# dnf install git gcc-c++ qt5-qtbase-devel qt5-qtxmlpatterns-devel # workbench-master```
-		+ ```# dnf install ShellCheck```
-		
-		
-	+ *Common packages*
-		+ ``` # yum builddep openscap scap-workbench scap-security-guide scap-security-guide-doc```
-		+ ``` # yum install rpm-devel libcurl-devel libxml2-devel libxslt-devel pcre-devel python-devel``` -- without builddep
-		+ ``` # yum groupinstall "Development Tools"```
-		+ ``` # yum install git libtool perl-XML-XPath valgrind sendmail asciidoc```
-		+ ``` # yum install bzip2-devel```
-		+ ``` # yum install libselinux-devel```
-		+ ``` # yum install openscap-scanner``` - required by SSG
-	+ asciidoctor on RHEL6/RHEL7
-		+ ``` # yum install rubygems && gem install asciidoc ```
-		+ ``` # yum install rubygems && gem install asciidoctor ```
-	+ scap-workbench
-		+ ``` # dnf install gcc-c++ ```
-	+ openscap-daemon
-		+ ``` # dnf install dbus-python gobject-introspection python3-gobject-base pygobject2-devel pygobject3-devel python3-dbus```
 
-	+ Enable/Start sendmail service ( mitre test requires it)
-		+ ``` # systemctl enable sendmail ; # systemctl start sendmail ```
+### Add Https support
++ Install nginx
++ Create folder available from http to allow letsencrypt script to public authentication files
++ Create nginx configuration
++ Get certificate/Create jenkins-job to renew certificates regularly
++ *Check permissions of generated files which should be private*
 
-## 5. Add Https support
-+ What we need
-	+ Install nginx
-	+ Create folder available from http to allow letsencrypt script to public authentication files
-	+ Create nginx configuration
-	+ Get certificate/Create jenkins-job to renew certificates regularly
-	+ *Check permissions of generated files which should be private*
-+ ~~Self-signed certificate~~
-	+ We have started to use https://letsencrypt.org/ certificate. If you still want to use self-signed certificate, use some older git revision of this file.
-	+
-+ 5.1 Lets encrypt certificate
-	+ Download let-encrypt
-		+ ```git clone https://github.com/letsencrypt/letsencrypt``` - use some persistent folder (we want to use this repo also for regular renews)
-	+ We will use webroot authentification, so we don't have to stop our nginx server to authenticate.
-	+ Create folder ```/lets-encrypt```
-	+ ```sudo chcon -Rt httpd_sys_content_t /lets-encrypt/``` set selinux permission
-	+ Create the script to renew certificate - chmod 500 to this file - user jenkins should not be able to modify this file
-	+ ```$PATH_TO_REPO/letsencrypt-auto certonly --webroot -w /lets-encrypt/ -d jenkins.open-scap.org --renew-by-default```
-	+ Add jenkins to sudoers to allow run the script with sudo/without password
-	+ Currently lets-encrypt has *beta* program, so we have to renew certificate at least every 3 months. You can create jenkins-job to solve this as well as yum update.
-	+ *Useful links*
-		+ http://letsencrypt.readthedocs.org/en/latest/using.html
-		+ https://blog.rudeotter.com/lets-encrypt-ssl-certificate-nginx-ubuntu/
+##### ~~Self-signed certificate~~
+We have started to use https://letsencrypt.org/ certificate. If you still want to use self-signed certificate, use some older git revision of this file.
+##### Lets encrypt certificate
++ Download let-encrypt
+    + ```git clone https://github.com/letsencrypt/letsencrypt``` - use some persistent folder (we want to use this repo also for regular renews)
++ We will use webroot authentification, so we don't have to stop our nginx server to authenticate.
++ Create folder ```/lets-encrypt```
++ ```sudo chcon -Rt httpd_sys_content_t /lets-encrypt/``` set selinux permission
++ Create the script to renew certificate - chmod 500 to this file - user jenkins should not be able to modify this file
++ ```$PATH_TO_REPO/letsencrypt-auto certonly --webroot -w /lets-encrypt/ -d jenkins.open-scap.org --renew-by-default```
++ Add jenkins to sudoers to allow run the script with sudo/without password
++ Currently lets-encrypt has *beta* program, so we have to renew certificate at least every 3 months. You can create jenkins-job to solve this as well as yum update.
++ *Useful links*
+    + http://letsencrypt.readthedocs.org/en/latest/using.html
+    + https://blog.rudeotter.com/lets-encrypt-ssl-certificate-nginx-ubuntu/
 
+#### Nginx
 + **Add Nginx**
 	+ http://wiki.nginx.org/Install#Official_Red_Hat.2FCentOS_packages
 + **Configure Nginx**
@@ -244,7 +204,49 @@ location / {
 + **Enable and run nginx service**
 	+ ```# systemctl enable nginx; systemctl start nginx```
 
-## 6. Create new Jobs
+## Configuration of slave node
++ Create **jenkins** user
+	+ ```# adduser jenkins```
+	+ ```# passwd jenkins``` and type password
++ Setup ssh to accept password authentification
+	+ sudo vi */etc/ssh/sshd_config*
+	+ set: *PasswordAuthentication yes*
+	+ restart sshd ```# systemctl restart sshd```
++ Install java
++ 	+ ```yum install wget```
++ Install java
+	+ ```# dnf install "java-*-openjdk``` or ```# yum install java```
+	+ Jenkins can install java on slave itself, but we want to have Java as package maintaned by yum/dnf.
+	+ *Fedora packages*
+		+ SCAP Workbench dependencies
+			+ ```# dnf install rubygem-asciidoctor openscap-devel zip```
+			+ (master branch)
+				+ ```# dnf install git gcc-c++ qt5-qtbase-devel qt5-qtxmlpatterns-devel # workbench-master```
+		+ ```# dnf install ShellCheck```
+
+
+	+ *Common packages*
+		+ ``` # yum builddep openscap scap-workbench scap-security-guide scap-security-guide-doc```
+		+ ``` # yum install rpm-devel libcurl-devel libxml2-devel libxslt-devel pcre-devel python-devel``` -- without builddep
+		+ ``` # yum groupinstall "Development Tools"```
+		+ ``` # yum install git libtool perl-XML-XPath valgrind sendmail asciidoc```
+		+ ``` # yum install bzip2-devel```
+		+ ``` # yum install libselinux-devel```
+		+ ``` # yum install openscap-scanner``` - required by SSG
+	+ asciidoctor on RHEL6/RHEL7
+		+ ``` # yum install rubygems && gem install asciidoc ```
+		+ ``` # yum install rubygems && gem install asciidoctor ```
+	+ scap-workbench
+		+ ``` # dnf install gcc-c++ ```
+	+ openscap-daemon
+		+ ``` # dnf install dbus-python gobject-introspection python3-gobject-base pygobject2-devel pygobject3-devel python3-dbus```
+
+	+ Enable/Start sendmail service ( mitre test requires it)
+		+ ``` # systemctl enable sendmail ; # systemctl start sendmail ```
+
+
+## Project Configuration
+### Create new Projects
 + **Pull requests**
 	+ Build Triggers: GitHub Pull Request Builder
 	+ set White list:
@@ -254,42 +256,41 @@ location / {
 + **GitHub* builder**
 	+ Build Triggers: Build when a change is pushed to GitHub
 
-## 7. Yum/DNF Updates
-+ Target: Update packages on our master and slaves regularly.
-+ Probably the best way to do this is Jenkins' job.
-	+ You can shedule it and you have easy access to update log.
-+ Problem: You need to have access to call yum as *jenkins* user without password
-	1. Use ```# visudo``` to edit /etc/sudoers.
-	2. Get path of yum/dnf: ```which yum```.
-	3. Allow jenkins user to run the file as sudo without password, add to sudoers file:
+### Yum/DNF Updates
+Currently, keeping packages on the nodes up to date is done via Jenkins jobs. Also it's preferable to utilize 'yum' command even for DNF-enabled nodes, so one project can handle all nodes.
+For jenkins to be able to trigger updates, you need to allow 'jenkins' user passwordless sudo for yum commands
+1. Use ```# visudo``` to edit /etc/sudoers.
+2. Get path of yum/dnf: ```which yum```.
+3. Allow jenkins user to run the file as sudo without password, add to sudoers file:
 
-		```jenkins		ALL=(ALL)	NOPASSWD:/bin/yum update -y``` 
-	4. Some systems don't allow sudo without tty(=you cannot use sudo from jenkins job), you have to add  ```Defaults:jenkins !requiretty``` after ```Defaults    requiretty``` in sudoers
-		+ (There was bug with visudo in RHEL7 - it allows you to store non valid sudoers and you lose completely access via sudo)
-	6. Create jenkins job
-		+ Check "Restrict where this project can be run" and select machine which you want to update.
-		+ Build triggers set to 'Build periodically'.
-		+ Shedule ```H 0 * * 7``` - It means every sunday about midnight. Jenkins provides examples when the job will by started.
-		+ To Build step add "Execute shell" with ```sudo yum update -y``` as context(or use dnf).
+    ```jenkins		ALL=(ALL)	NOPASSWD:/bin/yum update -y```
+4. Some systems don't allow sudo without tty(=you cannot use sudo from jenkins job), you have to add  ```Defaults:jenkins !requiretty``` after ```Defaults    requiretty``` in sudoers
+    + (There was bug with visudo in RHEL7 - it allows you to store non valid sudoers and you lose completely access via sudo)
 
-		
+#### Jenkins update on Master node
+Create separate job which updates only the Jenkins package. It is sufficient to run it once a week.
 
-	
-	
+#### Packages update
+Best to use multi-configuration project and enabling all the nodes in it.
++ Build triggers set to 'Build periodically'.
++ Shedule ```H 0 * * 7``` - It means every sunday about midnight. Jenkins provides examples when the job will by started.
++ To Build step add "Execute shell" with ```sudo yum update -y``` as context(or use dnf).
 
-## A. Possible issues:
-	+ Subscription issue:
-		- There is problem, that domanins requested due to subscriptions are resolved by "bad" DNS server and we don't get IP adress accessible from out machine
-		- Do you have this problem?
-			+ $ ping xmlrpc.rhn.redhat.com - you will get IP adress, but cannot ping it
-		- Fix:
-			+ /etc/resolv.conf
-				- add 'nameserver 8.8.8.8' to 
-			+ edit /etc/sysconfig/network-scripts/ifcfg-eth0
-				- set 'PEERDNS="no"'
-				- add/replace 'DNS1=8.8.8.8'
-			+ reboot & try $ ping xmlrpc.rhn.redhat.com
-	+ 502 error from nginx - bad gateway
-		- setsebool httpd_can_network_connect on -P
+
+## Possible issues
+
++ Subscription issue:
+    - There is problem, that domanins requested due to subscriptions are resolved by "bad" DNS server and we don't get IP adress accessible from out machine
+    - Do you have this problem?
+        + $ ping xmlrpc.rhn.redhat.com - you will get IP adress, but cannot ping it
+    - Fix:
+        + /etc/resolv.conf
+            - add 'nameserver 8.8.8.8' to
+        + edit /etc/sysconfig/network-scripts/ifcfg-eth0
+            - set 'PEERDNS="no"'
+            - add/replace 'DNS1=8.8.8.8'
+        + reboot & try $ ping xmlrpc.rhn.redhat.com
++ 502 error from nginx - bad gateway
+    - setsebool httpd_can_network_connect on -P
 
 
