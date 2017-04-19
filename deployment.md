@@ -212,10 +212,11 @@ location / {
 	+ sudo vi */etc/ssh/sshd_config*
 	+ set: *PasswordAuthentication yes*
 	+ restart sshd ```# systemctl restart sshd```
-+ Install java
++ Install wget
 + 	+ ```yum install wget```
 + Install java
-	+ ```# dnf install "java-*-openjdk``` or ```# yum install java```
+	+ **NOTE** As of Jenkins version ```2.54```, ```java-1.8``` is required!
+	+ ```# dnf install "java-1.8.0-openjdk``` or ```# yum install java-1.8.0-openjdk```
 	+ Jenkins can install java on slave itself, but we want to have Java as package maintaned by yum/dnf.
 	+ *Fedora packages*
 		+ SCAP Workbench dependencies
