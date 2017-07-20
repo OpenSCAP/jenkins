@@ -1,4 +1,4 @@
 ---
 - include: shared.yml
 - include: master.yml
-- include: worker.yml
+- include: workers.yml
