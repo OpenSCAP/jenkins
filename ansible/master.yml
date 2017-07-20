@@ -95,11 +95,11 @@
       dest: /etc/nginx/conf.d/jenkins.conf
     notify: restart nginx
 
-#  - name: Bootstrap letsencrypt directories
-#file:
-#path: /etc/letsencrypt/live/jenkins.open-scap.org/
-#state: directory
-#mode: 0750
+  - name: Tell SELinux to let nginx (reverse proxy) connect to network
+    seboolean:
+      name: httpd_can_network_connect
+      state: yes
+      persistent: yes
 
   - name: Set up nginx (reverse proxy) service
     service:
