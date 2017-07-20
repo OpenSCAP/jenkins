@@ -7,6 +7,7 @@
   vars:
     jenkins_repo_url: https://pkg.jenkins.io/redhat/jenkins.repo
     jenkins_repo_key_url: https://pkg.jenkins.io/redhat/jenkins.io.key
+    jenkins_admin_password: "{{ lookup('password', 'generated_bits/jenkins_admin_password length=20') }}"
 
   tasks:
   - name: Mount the Jenkins data directory
@@ -112,6 +113,11 @@
       name: nginx
       enabled: yes
       state: started
+
+  - name: Set up Jenkins admin web UI password
+    debug:
+      msg: "Jenkins admin pw: {{ jenkins_admin_password }}"
+    # TODO: actually implement this
 
   handlers:
   - name: restart nginx
