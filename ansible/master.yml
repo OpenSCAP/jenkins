@@ -71,6 +71,24 @@
       name: nginx
       state: installed
 
+  - name: Set-up a directory for TLS certificates for nginx
+    file:
+      path: /etc/nginx/tls
+      state: directory
+      mode: 0755
+      owner: root
+      group: root
+
+  - name: Check whether a TLS key for nginx is present
+    stat:
+      path: /etc/nginx/tls/server.key
+    register: nginx_tls_key
+
+# no clue if I am doing this right...
+  - name: Generate self signed temporary TLS certificate for nginx
+    command: openssl req -new -nodes -x509 -subj "/C=US/ST=Massachusetts/L=Boston/O=IT/CN=jenkins.open-scap.org" -days 365 -keyout /etc/nginx/tls/server.key -out /etc/nginx/tls/server.crt -extensions v3_ca creates=/etc/nginx/tls/server.crt
+    when: nginx_tls_key.stat.exists == False  # only if letsencrypt's cert is missing
+
   - name: Config nginx (reverse proxy) with jenkins.conf
     copy:
       src: ./master_cfg/nginx_jenkins.conf
