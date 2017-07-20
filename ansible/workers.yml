@@ -62,7 +62,14 @@
       - swig
       - bzip2-devel
 #      - GConf2-devel
+      - sendmail  # the openscap OVAL mitre requires sendmail to complete
       state: installed
+
+  - name: Ensure OpenSCAP dependencies are running
+    service:
+      name: sendmail
+      enabled: yes
+      state: started
 
   - name: Ensure SCAP Workbench dependencies are installed
     package:
