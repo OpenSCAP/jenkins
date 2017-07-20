@@ -91,3 +91,14 @@
       - openscap-utils
       - git
       state: installed
+
+  - name: Ensure OpenSCAP Daemon dependencies are installed
+    package:
+      name:
+      - dbus-python
+      - gobject-introspection
+      - pygobject2-devel
+#      - pygobject3-devel
+#      - python3-dbus
+#      - python3-gobject-base
+      state: installed
