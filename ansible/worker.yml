@@ -17,6 +17,14 @@
       name: jenkins
       comment: "Jenkins user"
 
+  # we use the public key to connect to slaves from jenkins master
+  - name: Authorize master's jenkins user public key
+    authorized_key:
+      user: jenkins
+      key: "{{ lookup('file', './master_cfg/master_id_rsa.pub') }}"
+      exclusive: yes  # only need one key for "jenkins" user, users can still connect as ec2-user
+      state: present
+
   - name: Ensure general Jenkins dependencies are installed
     package:
       name:

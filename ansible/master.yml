@@ -55,6 +55,14 @@
       comment: "Jenkins master user"
       home: /var/lib/jenkins/home
       move_home: yes
+      generate_ssh_key: yes  # we will use this key to connect to workers
+
+  - name: Fetch jenkins public key from master to local machine
+    fetch:
+      src: /var/lib/jenkins/home/.ssh/id_rsa.pub
+      dest: ./master_cfg/master_id_rsa.pub
+      flat: yes
+      fail_on_missing: yes
 
   - name: Set up Jenkins service
     service:
