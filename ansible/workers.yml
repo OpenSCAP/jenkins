@@ -17,7 +17,7 @@
   - name: Authorize master's jenkins user public key
     authorized_key:
       user: jenkins
-      key: "{{ lookup('file', './master_cfg/master_id_rsa.pub') }}"
+      key: "{{ lookup('file', 'generated_bits/master_id_rsa.pub') }}"
       exclusive: yes  # only need one key for "jenkins" user, users can still connect as ec2-user
       state: present
 

@@ -1,6 +1,4 @@
 ansible/*.retry
 
-# we generate this file on jenkins master server and then copy back the pub key
-ansible/master_cfg/master_id_rsa.pub
-# generated jenkins admin password, ...
+# generated jenkins admin password, jenkins user public key...
 generated_bits/

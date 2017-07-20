@@ -57,7 +57,7 @@
   - name: Fetch jenkins public key from master to local machine
     fetch:
       src: /var/lib/jenkins/home/.ssh/id_rsa.pub
-      dest: ./master_cfg/master_id_rsa.pub
+      dest: generated_bits/master_id_rsa.pub
       flat: yes
       fail_on_missing: yes
 
