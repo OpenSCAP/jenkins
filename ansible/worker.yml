@@ -8,6 +8,10 @@
   become_method: sudo
 
   tasks:
+  - name: Set hostname
+    hostname:
+      name: "{{ inventory_hostname }}"
+
   - name: Set up Jenkins user
     user:
       name: jenkins

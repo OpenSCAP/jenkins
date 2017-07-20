@@ -9,6 +9,10 @@
     jenkins_repo_key_url: https://pkg.jenkins.io/redhat/jenkins.io.key
 
   tasks:
+  - name: Set hostname
+    hostname:
+      name: "{{ inventory_hostname }}"
+
   - name: Mount the Jenkins data directory
     mount:
       path: /var/lib/jenkins
