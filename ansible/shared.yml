@@ -1,0 +1,19 @@
+---
+- hosts: all
+
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: Set hostname
+    hostname:
+      name: "{{ inventory_hostname }}"
+
+  - name: Set up /etc/hosts with IPv4 of master and workers
+    lineinfile:
+      dest: /etc/hosts
+      regexp: ".*{{ item }}$"
+      line: "{{ hostvars[item].ansible_default_ipv4.address }} {{item}}"
+      state: present
+    when: hostvars[item].ansible_default_ipv4.address is defined
+    with_items: "{{ groups['all'] }}"

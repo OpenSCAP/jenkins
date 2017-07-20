@@ -1,7 +1,1 @@
-= Apply on Jenkins master =
-
-ansible-playbook -i inventory.ini ./master.yml
-
-= Apply on Jenkins workers =
-
-ansible-playbook -i inventory.ini ./worker.yml
+ansible-playbook -i inventory.ini ./all.yml
