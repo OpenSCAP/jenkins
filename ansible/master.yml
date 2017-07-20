@@ -60,6 +60,13 @@
       flat: yes
       fail_on_missing: yes
 
+  - name: Jenkins skip setup wizard
+    lineinfile:
+      dest=/etc/sysconfig/jenkins
+      regexp='^JENKINS_JAVA_OPTIONS='
+      line='JENKINS_JAVA_OPTIONS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+
+
   - name: Set up Jenkins service
     service:
       name: jenkins
