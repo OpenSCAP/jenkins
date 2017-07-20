@@ -1,0 +1,86 @@
+---
+- hosts: master
+
+  become: yes
+  become_method: sudo
+
+  vars:
+    jenkins_repo_url: https://pkg.jenkins.io/redhat/jenkins.repo
+    jenkins_repo_key_url: https://pkg.jenkins.io/redhat/jenkins.io.key
+
+  tasks:
+  - name: Mount the Jenkins data directory
+    mount:
+      path: /var/lib/jenkins
+      src: /dev/sdb
+      fstype: ext4
+      state: present
+
+  - name: Ensure Jenkins repo is enabled
+    get_url:
+      url: "{{ jenkins_repo_url }}"
+      dest: /etc/yum.repos.d/jenkins.repo
+
+  - name: Add Jenkins repo GPG key
+    rpm_key:
+      state: present
+      key: "{{ jenkins_repo_key_url }}"
+
+  - name: Ensure nginx (reverse proxy) repo is enabled
+    copy:
+      src: ./master_cfg/nginx.repo
+      dest: /etc/yum.repos.d/nginx.repo
+
+  - name: Ensure dependencies are installed
+    package:
+      name:
+      - curl
+      - libselinux-python
+      - initscripts
+      - java
+      state: installed
+
+  - name: Install Jenkins
+    package:
+      name: jenkins
+      state: present
+
+  - name: Set up Jenkins user
+    user:
+      name: jenkins
+      comment: "Jenkins master user"
+      home: /var/lib/jenkins/home
+      move_home: yes
+
+  - name: Set up Jenkins service
+    service:
+      name: jenkins
+      enabled: yes
+      state: started
+
+  - name: Install nginx (reverse proxy)
+    package:
+      name: nginx
+      state: installed
+
+  - name: Config nginx (reverse proxy) with jenkins.conf
+    copy:
+      src: ./master_cfg/nginx_jenkins.conf
+      dest: /etc/nginx/conf.d/jenkins.conf
+    notify: restart nginx
+
+#  - name: Bootstrap letsencrypt directories
+#file:
+#path: /etc/letsencrypt/live/jenkins.open-scap.org/
+#state: directory
+#mode: 0750
+
+  - name: Set up nginx (reverse proxy) service
+    service:
+      name: nginx
+      enabled: yes
+      state: started
+
+  handlers:
+  - name: restart nginx
+    service: name=nginx state=restarted
