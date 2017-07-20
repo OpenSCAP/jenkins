@@ -21,6 +21,19 @@
       exclusive: yes  # only need one key for "jenkins" user, users can still connect as ec2-user
       state: present
 
+  # RHEL7 optional RPMs are required for -devel packages
+  # we can't use yum_repository ansible module because it doesn't allow
+  # modification of existing repo files, it's mainly for creating new files
+  - name: Enable the rhel7 server optional RPMs repo
+    ini_file:
+      path: /etc/yum.repos.d/redhat-rhui.repo
+      section: rhui-REGION-rhel-server-optional
+      option: enabled
+      value: yes
+      create: no
+      state: present
+    when: ansible_distribution == 'RedHat'
+
   - name: Ensure general Jenkins dependencies are installed
     package:
       name:
