@@ -93,17 +93,18 @@
       flat: yes
       fail_on_missing: yes
 
+  - name: Set up Jenkins service  # this needs to be before set up Jenkins start-up options
+    service:
+      name: jenkins
+      enabled: yes
+      state: started
+
   - name: Set up Jenkins start-up Java options
     lineinfile:
       dest: /etc/sysconfig/jenkins
       regexp: '^JENKINS_JAVA_OPTIONS='
       line: 'JENKINS_JAVA_OPTIONS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'  # the setup wizard is a security risk
-
-  - name: Set up Jenkins service
-    service:
-      name: jenkins
-      enabled: yes
-      state: started
+    notify: restart jenkins
 
   - name: Install nginx (reverse proxy)
     package:
