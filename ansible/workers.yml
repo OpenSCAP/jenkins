@@ -72,7 +72,7 @@
       - rpm-devel
       - swig
       - bzip2-devel
-#      - GConf2-devel
+      - GConf2-devel
       - sendmail  # the openscap OVAL mitre requires sendmail to complete
       state: installed
 
