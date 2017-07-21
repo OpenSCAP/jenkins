@@ -15,6 +15,7 @@
       - ghprb
       - role-strategy
       - cmakebuilder
+      - build-name-setter
     update_jobs: false
 
   tasks:
