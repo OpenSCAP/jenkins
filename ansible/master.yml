@@ -16,6 +16,7 @@
       - role-strategy
       - cmakebuilder
       - build-name-setter
+      - ssh-slaves
     update_jobs: false
 
   tasks:
