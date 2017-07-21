@@ -7,7 +7,13 @@
   vars:
     jenkins_repo_url: https://pkg.jenkins.io/redhat/jenkins.repo
     jenkins_repo_key_url: https://pkg.jenkins.io/redhat/jenkins.io.key
-    jenkins_admin_password: "{{ lookup('password', 'generated_bits/jenkins_admin_password length=20') }}"
+    # this password file is currently not used
+    admin_password_filepath: /var/lib/jenkins/secrets/openscapPassword
+    important_jenkins_plugins:
+      - github
+      - github-oauth
+      - ghprb
+      - role-strategy
 
   tasks:
   - name: Mount the Jenkins data directory
@@ -114,11 +120,77 @@
       enabled: yes
       state: started
 
-  - name: Set up Jenkins admin web UI password
-    debug:
-      msg: "Jenkins admin pw: {{ jenkins_admin_password }}"
-    # TODO: actually implement this
+  - name: Check admin password file
+    stat:
+      path: "{{ admin_password_filepath }}"
+    register: admin_password_file
+
+  - name: Slurp admin password from initialAdminPassword
+    slurp:
+      src: /var/lib/jenkins/secrets/initialAdminPassword
+    register: admin_passfile_init
+    when: admin_password_file.stat.exists == False
+
+  - name: Slurp admin password from openscapPassword
+    slurp:
+      src: "{{ admin_password_filepath }}"
+    register: admin_passfile_scap
+    when: admin_password_file.stat.exists == True
+
+  - name: Get admin password
+    set_fact:
+      admin_password: "{{ admin_passfile_scap if admin_password_file.stat.exists == True else admin_passfile_init }}"
+
+  - name: Decode admin password
+    set_fact:
+      admin_password: "{{ admin_password['content'] | b64decode | trim }}" # it contained newline character
+
+  - name: Install Jenkins plugins
+    jenkins_plugin:
+      name: "{{ item }}"
+      state: absent
+      url_username: admin
+      url_password: "{{ admin_password }}"
+    register: jenkins_plugins
+    with_items: "{{ important_jenkins_plugins }}"
+
+  - name: Restart Jenkins if new plugins got installed
+    service:
+      name: jenkins
+      state: restarted
+    when: jenkins_plugins.changed
+
+  - name: Wait for Jenkins to start up
+    uri:
+      url: http://localhost:8080
+      method: GET
+      status_code: 200
+      timeout: 5
+      user: admin
+      password: "{{ admin_password }}"
+      force_basic_auth: yes
+    register: jenkins_service_status
+    # Empty jenkins starts in 4 seconds, 30 seconds should suffice
+    retries: 15
+    delay: 2
+    until: >
+       'status' in jenkins_service_status and
+       jenkins_service_status['status'] == 200
+    when: jenkins_plugins.changed
+
+
+  - name: Jenkins plugin enabling
+    jenkins_plugin:
+      name: "{{ item }}"
+      state: enabled
+      url_username: admin
+      url_password: "{{ admin_password }}"
+    with_items: "{{ important_jenkins_plugins }}"
+    notify: restart jenkins
 
   handlers:
   - name: restart nginx
     service: name=nginx state=restarted
+
+  - name: restart jenkins
+    service: name=jenkins state=restarted
