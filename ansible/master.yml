@@ -19,6 +19,7 @@
       - ssh-slaves
       - leastload
       - ansicolor
+      - nodelabelparameter
     reset_jenkins_jobs: false  # set this to true if you want all the jobs reset, you probably only need to do this when you lose the jenkins home dir data
     jenkins_jobs:
       - openscap-custom-repo
