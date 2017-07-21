@@ -38,6 +38,19 @@
       src: ./master_cfg/nginx.repo
       dest: /etc/yum.repos.d/nginx.repo
 
+# EPEL is needed for python-pip package, which is required for python-jenkins
+# and lxml -these are required by jenkins_job module. jenkins_job is required
+# by us.
+  - name: Add repository
+    yum_repository:
+      name: epel
+      description: Extra Packages for Enterprise Linux 7 - $basearch
+      mirrorlist: https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
+      failovermethod: priority
+      gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7Server
+      gpgcheck: yes
+    when: ansible_distribution == 'RedHat'
+
   - name: Ensure dependencies are installed
     package:
       name:
@@ -45,7 +58,14 @@
       - libselinux-python
       - initscripts
       - java
+      - python-pip
       state: installed
+
+  - name: Ensure python dependencies are installed
+    pip:
+      name:
+      - python-jenkins # is in EPEL, but who cares if we have to pip lxml anyway
+      - lxml  # libxml2 is RPM, but too old :(
 
   - name: Install Jenkins
     package:
@@ -187,6 +207,34 @@
       url_password: "{{ admin_password }}"
     with_items: "{{ important_jenkins_plugins }}"
     notify: restart jenkins
+
+  - name: Enable OpenSCAP Pull Request job
+    jenkins_job:
+      config: "{{ lookup('file', 'jobs/openscap-pull-requests.xml') }}"
+      name: openscap-pull-requests
+      user: admin
+      password: "{{ admin_password }}"
+
+  - name: Enable SCAP Security Guide Pull Request job
+    jenkins_job:
+      config: "{{ lookup('file', 'jobs/scap-security-guide-pull-requests.xml') }}"
+      name: scap-security-guide-pull-requests
+      user: admin
+      password: "{{ admin_password }}"
+
+  - name: Enable SCAP Workbench Pull Request job
+    jenkins_job:
+      config: "{{ lookup('file', 'jobs/scap-workbench-pull-requests.xml') }}"
+      name: scap-workbench-pull-requests
+      user: admin
+      password: "{{ admin_password }}"
+
+  - name: Enable OpenSCAP Daemon Pull Request job
+    jenkins_job:
+      config: "{{ lookup('file', 'jobs/openscap-daemon-pull-requests.xml') }}"
+      name: openscap-daemon-pull-requests
+      user: admin
+      password: "{{ admin_password }}"
 
   handlers:
   - name: restart nginx
