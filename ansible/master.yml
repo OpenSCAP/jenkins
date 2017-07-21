@@ -14,6 +14,7 @@
       - github-oauth
       - ghprb
       - role-strategy
+    update_jobs: false
 
   tasks:
   - name: Mount the Jenkins data directory
@@ -215,6 +216,7 @@
       name: openscap-pull-requests
       user: admin
       password: "{{ admin_password }}"
+    when: update_jobs
 
   - name: Enable SCAP Security Guide Pull Request job
     jenkins_job:
@@ -222,6 +224,7 @@
       name: scap-security-guide-pull-requests
       user: admin
       password: "{{ admin_password }}"
+    when: update_jobs
 
   - name: Enable SCAP Workbench Pull Request job
     jenkins_job:
@@ -229,6 +232,7 @@
       name: scap-workbench-pull-requests
       user: admin
       password: "{{ admin_password }}"
+    when: update_jobs
 
   - name: Enable OpenSCAP Daemon Pull Request job
     jenkins_job:
@@ -236,6 +240,7 @@
       name: openscap-daemon-pull-requests
       user: admin
       password: "{{ admin_password }}"
+    when: update_jobs
 
   handlers:
   - name: restart nginx
