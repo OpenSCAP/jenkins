@@ -14,6 +14,7 @@
       - github-oauth
       - ghprb
       - role-strategy
+      - cmakebuilder
     update_jobs: false
 
   tasks:
