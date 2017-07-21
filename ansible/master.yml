@@ -19,7 +19,7 @@
       - ssh-slaves
       - leastload
       - ansicolor
-    update_jobs: false
+    update_jobs: false  # set this to true if you want all the jobs reset, you probably only need to do this when you lose the jenkins home dir data
 
   tasks:
   - name: Partition the Jenkins data volume
