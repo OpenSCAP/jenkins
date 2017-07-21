@@ -18,6 +18,7 @@
       - build-name-setter
       - ssh-slaves
       - leastload
+      - ansicolor
     update_jobs: false
 
   tasks:
