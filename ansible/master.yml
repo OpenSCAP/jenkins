@@ -19,7 +19,25 @@
       - ssh-slaves
       - leastload
       - ansicolor
-    update_jobs: false  # set this to true if you want all the jobs reset, you probably only need to do this when you lose the jenkins home dir data
+    reset_jenkins_jobs: false  # set this to true if you want all the jobs reset, you probably only need to do this when you lose the jenkins home dir data
+    jenkins_jobs:
+      - openscap-custom-repo
+      - openscap-daemon-pull-requests
+      - openscap-daemon
+      - openscap-maint
+      - openscap-master-disabled-probes
+      - openscap-master
+      - openscap-parametrized
+      - openscap-pull-requests
+      - scap-security-guide-nightly-oval510-zip
+      - scap-security-guide-nightly-zip
+      - scap-security-guide-nist-testsuite
+      - scap-security-guide-parameters
+      - scap-security-guide-pull-requests
+      - scap-security-guide-rhel6-usgcb
+      - scap-workbench-maint
+      - scap-workbench-pull-requests
+      - static_openscap_docs
 
   tasks:
   - name: Ensure the Jenkins data volume is partitioned
@@ -239,45 +257,14 @@
     with_items: "{{ important_jenkins_plugins }}"
     notify: restart jenkins
 
-  - name: Enable OpenSCAP Pull Request job
+  - name: Create / Reset Jenkins jobs
     jenkins_job:
-      config: "{{ lookup('file', 'jobs/openscap-pull-requests.xml') }}"
-      name: openscap-pull-requests
+      config: "{{ lookup('file', 'jobs/' + item + '.xml') }}"
+      name: "{{ item }}"
       user: admin
       password: "{{ admin_password }}"
-    when: update_jobs
-
-  - name: Enable SCAP Security Guide Pull Request job
-    jenkins_job:
-      config: "{{ lookup('file', 'jobs/scap-security-guide-pull-requests.xml') }}"
-      name: scap-security-guide-pull-requests
-      user: admin
-      password: "{{ admin_password }}"
-    when: update_jobs
-
-  - name: Enable SCAP Workbench Pull Request job
-    jenkins_job:
-      config: "{{ lookup('file', 'jobs/scap-workbench-pull-requests.xml') }}"
-      name: scap-workbench-pull-requests
-      user: admin
-      password: "{{ admin_password }}"
-    when: update_jobs
-
-  - name: Enable OpenSCAP Daemon Pull Request job
-    jenkins_job:
-      config: "{{ lookup('file', 'jobs/openscap-daemon-pull-requests.xml') }}"
-      name: openscap-daemon-pull-requests
-      user: admin
-      password: "{{ admin_password }}"
-    when: update_jobs
-
-  - name: Enable SCAP Workbench periodic job
-    jenkins_job:
-      config: "{{ lookup('file', 'jobs/scap-workbench-maint.xml') }}"
-      name: scap-workbench-maint
-      user: admin
-      password: "{{ admin_password }}"
-    when: update_jobs
+    with_items: "{{ jenkins_jobs }}"
+    when: reset_jenkins_jobs
 
   handlers:
   - name: restart nginx
