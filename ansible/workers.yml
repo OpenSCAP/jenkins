@@ -39,6 +39,17 @@
       name:
         - java
 
+  - name: Ensure general build dependencies are installed
+    package:
+      name:
+        - autoconf
+        - automake
+        - libtool
+        - doxygen
+        - git
+        - rubygems
+        - gawk
+
   - name: Ensure OpenSCAP dependencies are installed
     package:
       name:
