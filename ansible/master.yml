@@ -17,6 +17,7 @@
       - cmakebuilder
       - build-name-setter
       - ssh-slaves
+      - leastload
     update_jobs: false
 
   tasks:
