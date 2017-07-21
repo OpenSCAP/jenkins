@@ -130,3 +130,4 @@
 #      - python3-dbus
 #      - python3-gobject-base
       state: installed
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] >= "7"
