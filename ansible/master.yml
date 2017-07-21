@@ -22,12 +22,28 @@
     update_jobs: false
 
   tasks:
+  - name: Partition the Jenkins data volume
+    parted:
+      device: /dev/xvdb
+      number: 1
+      state: present
+
+  - name: Ensure ext4 is used for the Jenkins data partition
+    filesystem:
+      fstype: ext4
+      dev: /dev/xvdb1
+
+  - name: Create mount point for Jenkins data directory
+    file:
+      path: /var/lib/jenkins
+      state: directory
+
   - name: Mount the Jenkins data directory
     mount:
       path: /var/lib/jenkins
-      src: /dev/sdb
+      src: /dev/xvdb1
       fstype: ext4
-      state: present
+      state: mounted
 
   - name: Ensure Jenkins repo is enabled
     get_url:
