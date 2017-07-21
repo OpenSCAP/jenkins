@@ -92,8 +92,12 @@
       - openscap-devel
       - qt-devel
       - polkit
-#      - rubygem-asciidoctor
       state: installed
+
+  - name: Ensure SCAP Workbench has asciidoctor installed
+    gem:
+      name: asciidoctor
+      user_install: no # let's install it everywhere
 
   - name: Ensure SCAP Security Guide dependencies are installed
     package:
