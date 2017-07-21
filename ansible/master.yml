@@ -22,7 +22,7 @@
     update_jobs: false  # set this to true if you want all the jobs reset, you probably only need to do this when you lose the jenkins home dir data
 
   tasks:
-  - name: Partition the Jenkins data volume
+  - name: Ensure the Jenkins data volume is partitioned
     parted:
       device: /dev/xvdb
       number: 1
