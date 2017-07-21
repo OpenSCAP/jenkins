@@ -168,7 +168,8 @@
   - name: Install Jenkins plugins
     jenkins_plugin:
       name: "{{ item }}"
-      state: absent
+      state: present
+      with_dependencies: yes
       url_username: admin
       url_password: "{{ admin_password }}"
     register: jenkins_plugins
