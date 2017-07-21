@@ -60,6 +60,7 @@
       - initscripts
       - java
       - python-pip
+      - git  # jenkins itself needs git as well
       state: installed
 
   - name: Ensure python dependencies are installed
