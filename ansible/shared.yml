@@ -86,9 +86,16 @@
   - name: Enable the virtual-guest performance profile
     shell: tuned-adm profile virtual-guest
 
-  - name: Disable kdump on RHELs
+  - name: Disable kdump
     service:
       name: kdump
       enabled: no
       state: stopped
-    when: ansible_distribution == 'RedHat'
+    ignore_errors: yes  # fails if kdump is not even available
+
+  - name: Disable sssd  # we don't need its features
+    service:
+      name: sssd
+      enabled: no
+      state: stopped
+    ignore_errors: yes  # fails if sssd is not even available
