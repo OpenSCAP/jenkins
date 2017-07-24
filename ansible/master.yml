@@ -288,6 +288,13 @@
       dest: /root/
       mode: 0700
 
+  - name: Set-up automated letsencrypt TLS renewal via cron
+    cron:
+      name: "Renew TLS certificates via letsencrypt"
+      user: "root"
+      special_time: monthly
+      job: "/root/letsencrypt.sh"
+
   handlers:
   - name: restart nginx
     service: name=nginx state=restarted
