@@ -220,7 +220,7 @@
   - name: Set Jenkins master nr of executors to 0  # we don't want to ever build anything on master, only on workers
     lineinfile:
       dest: /var/lib/jenkins/config.xml
-      regexp: "^[\\s]*<numExecutors>2</numExecutors>"
+      regexp: "^[\\s]*<numExecutors>"
       line: "  <numExecutors>0</numExecutors>"
     notify: restart jenkins
 
