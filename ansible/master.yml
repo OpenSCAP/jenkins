@@ -155,6 +155,15 @@
       owner: root
       group: root
 
+  - name: Set-up a directory for letsencrypt .well-known files
+    file:
+      path: /letsencrypt_public_html/.well-known/
+      state: directory
+      mode: 0755
+      owner: root
+      group: root
+      setype: httpd_sys_content_t
+
   - name: Check whether a TLS key for nginx is present
     stat:
       path: /etc/nginx/tls/server.key
@@ -249,7 +258,6 @@
        jenkins_service_status['status'] == 200
     when: jenkins_plugins.changed
 
-
   - name: Jenkins plugin enabling
     jenkins_plugin:
       name: "{{ item }}"
@@ -267,6 +275,18 @@
       password: "{{ admin_password }}"
     with_items: "{{ jenkins_jobs }}"
     when: reset_jenkins_jobs
+
+  - name: Letsencrypt repository is available
+    git:
+      repo: https://github.com/letsencrypt/letsencrypt
+      dest: /root/letsencrypt
+      update: yes
+
+  - name: Copy the letsencrypt script over
+    copy:
+      src: ./master_cfg/letsencrypt.sh
+      dest: /root/
+      mode: 0700
 
   handlers:
   - name: restart nginx
