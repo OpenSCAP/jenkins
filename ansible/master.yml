@@ -180,11 +180,11 @@
       dest: /etc/nginx/conf.d/jenkins.conf
     notify: restart nginx
 
-  - name: Enable gzip compression in nginx (reserve proxy)
+  - name: Enable gzip compression in nginx (reverse proxy)
     lineinfile:
       dest: /etc/nginx/nginx.conf
       regexp: "^[\\s]*#?gzip"
-      line: "    gzip on;"
+      line: "    gzip on; gzip_disable \"msie6\"; gzip_comp_level 6; gzip_min_length 1100; gzip_buffers 16 8k; gzip_proxied any; gzip_types text/plain text/css text/js text/xml text/javascript application/javascript application/x-javascript application/json application/xml application/rss+xml image/svg+xml; gzip_vary on;"
     notify: restart nginx
 
   - name: Tell SELinux to let nginx (reverse proxy) connect to network
