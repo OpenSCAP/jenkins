@@ -71,3 +71,17 @@
       name: yum-cron
       enabled: yes
       state: started
+
+  - name: Install tuned (performance tuning)
+    package:
+      name: tuned
+      state: present
+
+  - name: Start tuned (performance tuning)
+    service:
+      name: tuned
+      enabled: yes
+      state: started
+
+  - name: Enable the virtual-guest performance profile
+    shell: tuned-adm profile virtual-guest
