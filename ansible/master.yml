@@ -21,6 +21,7 @@
       - ansicolor
       - nodelabelparameter
       - managed-scripts
+      - greenballs # not important, but better than blue ones
     reset_jenkins_jobs: false  # set this to true if you want all the jobs reset, you probably only need to do this when you lose the jenkins home dir data
     jenkins_jobs:
       - openscap-custom-repo
@@ -240,6 +241,10 @@
       url_password: "{{ admin_password }}"
     register: jenkins_plugins
     with_items: "{{ important_jenkins_plugins }}"
+    ignore_errors: True # We do ignore errors because with oauth set up,
+                        # logging in with local admin account is no longer
+                        # possible.
+                        # TODO: make a check before and react accordingly
 
   - name: Restart Jenkins if new plugins got installed
     service:
@@ -273,6 +278,10 @@
       url_password: "{{ admin_password }}"
     with_items: "{{ important_jenkins_plugins }}"
     notify: restart jenkins
+    ignore_errors: True # We do ignore errors because with oauth set up,
+                        # logging in with local admin account is no longer
+                        # possible.
+                        # TODO: make a check before and react accordingly
 
   - name: Create / Reset Jenkins jobs
     jenkins_job:
