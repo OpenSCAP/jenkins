@@ -14,7 +14,7 @@ This document describes current settings. You maybe want to use different config
 		+ Starts some jobs on slaves.
 		+ Master can perform slaves routines too.
 		+ Connects to slaves e.g. using ssh.
-	+ 0..n *Slave*s
+	+ 0..n *Worker*s
 		+ "dummy" computers doing the hard work (compiling, testing)
 
 ## Get some machines
@@ -29,6 +29,10 @@ inventory.ini file for a list of machines and their IPs. These machines currentl
 in AWS. If you want your public key added to those machines please contact the admin
 that maintains the AWS account.
 
+### How to prepare machines
+You might want to use Ansible Playbooks, saved in ```./ansible``` directory.
+Please see ```README.md``` for details.
+
 ### Important files & paths on Jenkins master
  - **/var/lib/jenkins/**
 	- Complete configuration folder storage
@@ -41,6 +45,7 @@ that maintains the AWS account.
  - *TIP*: when you lose root access and need to backup jenkins settings files, you can run job on master(=as 'jenkins' user) to get access to config files.
 
 ### Plugins
+ + Please avoid installing plugins manually, instead edit the ansible playbook. See the `master.yml` playbook.
  + Jenkins provides some set of default plugins
  + "Important" plugins to install:
 	+ *Github Authentication plugin*
@@ -52,29 +57,9 @@ that maintains the AWS account.
 		+ Set status on GitHub
 	+ *Role-based Authorization Strategy*
 		+ Allow manage user rights as roles
- + Please avoid installing plugins manually, instead edit the ansible playbook. See the `master.yml` playbook.
 
 #### GitHub Integration
- + *GitHub Auth*
-	+ Settings:
-		+ Jenkins/Configure Global Security/Access Control/Security Realm/
-			+ select Github Authentication Plugin
-			+ add admin rights to your GitHub acc before you logout!
-	+ Create *GitHub application* https://github.com/settings/applications/new
-		+	(is already created by user openscap-jenkins user)
-		+	fill *Client ID* and *Client Secret* from the app
- + *WebHooks*
-	+ When you do some action with GitHub repo, it can call you via "webhooks"
-	+ (When you don't use webhooks, you can use polling from jenkins server)
-	+ You need to setup *2 types* of hooks for changes in branch and for pull requests - select setting on your repository
-		+ *GitHub Pull Request Builder*
-			+ hook url: *https://jenkins.open-scap.org/ghprbhook/*
-				+ required GitHub hooks 'issue_comment, pull_request'
-			+ "The user needs to have push rights for your repository (must be collaborator (user repo) or must have Push & Pull rights (organization repo))."
-			+ "If you want to use GitHub hooks have them set automatically the user needs to have administrator rights for your repository (must be owner (user repo) or must have Push, Pull & Administrative rights (organization repo))"
-		+ *GitHub plugin*
-			+ hook url: *https://jenkins.open-scap.org/github-webhook/*
-			+ Add service Jenkins (GitHub plugin)
+For details how to setup integration with GitHub, please check `./ansible/README.md`
 
 ### Add Https support
 Please consult the /root/letsencrypt.sh shell script for how to get certificates and deploy them to nginx.
