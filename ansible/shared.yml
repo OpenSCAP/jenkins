@@ -99,3 +99,14 @@
       enabled: no
       state: stopped
     ignore_errors: yes  # fails if sssd is not even available
+
+  - name: Disable password auth in sshd
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: "^#?PasswordAuthentication"
+      line: "PasswordAuthentication no"
+    notify: restart sshd
+
+  handlers:
+  - name: restart sshd
+    service: name=sshd state=restarted
