@@ -15,6 +15,31 @@ If you don't want to distribute public keys manually, you might want to utilize
 Ansible module authorized_key, and run it from separate, not publicly available
 Ansible playbook.
 
+### Extend the root partition
+Depending on the image you use to create the AWS instances you may need to
+extend the root partition. This is a dangerous step which is why we don't even
+attempt it in the playbook. This is applicable to both the master and workers.
+
+```
+$ sudo gdisk /dev/xvda1
+i 1
+(copy all the details somewhere, you will need them later)
+d 1
+n 1
+(now make absolutely sure the first sector is EXACTLY the same as before)
+(match the GUID)
+x
+c
+(paste the previous "unique GUID")
+p
+(double check everything)
+w
+
+$ sudo reboot
+(after reboot)
+$ sudo resize2fs /dev/xvda1
+```
+
 ### GitHub OAuth plugin
 Authentication model of Jenkins as provided by Ansible playbook ```master.yml```
 utilizes basic Jenkins database, with the only user being Admin.
