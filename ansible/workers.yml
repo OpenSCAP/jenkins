@@ -91,7 +91,6 @@
       name:
       - cmake
       - openscap-utils
-      - git
       - wget  # needed for the NIST test suite for SSG
       state: installed
 
