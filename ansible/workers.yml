@@ -36,7 +36,6 @@
         - git
         - rubygems
         - gawk
-        - wget  # needed for the NIST test suite for SSG
 
   - name: Ensure OpenSCAP dependencies are installed
     package:
@@ -93,6 +92,7 @@
       - cmake
       - openscap-utils
       - git
+      - wget  # needed for the NIST test suite for SSG
       state: installed
 
   - name: Ensure OpenSCAP Daemon dependencies are installed
