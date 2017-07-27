@@ -70,6 +70,19 @@ configuration screens.
 GitHub user utilized by ```pull-request``` jobs is ```openscap-ci```.
 Credentials are available to the core team members.
 
+### Jenkins Nodes / Workers
+Connect Jenkins workers to the master using the `ssh-agent` plugin. Go to
+Jenkins -> Credentials -> System -> Global (unrestricted). Click
+"Add Credentials". Select the jenkins master user ssh private key. Set Scope
+to "System (Jenkins and nodes only)".
+
+After doing this you will be able to add new nodes using this credential.
+Use the internal AWS IP because transfers over it are free.
+
+For each node set Environment variable "CPU_COUNT" to the appropriate number.
+If you fail to do this some of the jobs will build as parallel as possible
+which may cause OutOfMemory errors.
+
 ### GitHub Webhooks
 GitHub Webhooks are not set up by the Ansible Playbooks, but must be created
 either automatically by Jenkins, or manually by person doing the setup. The
