@@ -100,8 +100,11 @@
       - dbus-python
       - gobject-introspection
       - pygobject2-devel
-#      - pygobject3-devel
-#      - python3-dbus
-#      - python3-gobject-base
+      - python-gobject-base
+      - python-gobject
+      - python3-dbus
+      - pygobject3-devel
+      - python3-gobject-base
+      - python3-gobject
       state: installed
     when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] >= "7"
