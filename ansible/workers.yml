@@ -36,6 +36,7 @@
         - git
         - rubygems
         - gawk
+        - gcc
 
   - name: Ensure OpenSCAP dependencies are installed
     package:
@@ -61,6 +62,12 @@
       - bzip2-devel
       - GConf2-devel
       - sendmail  # the openscap OVAL mitre requires sendmail to complete
+      - wget
+      - lua
+      - which
+      - procps-ng
+      - initscripts
+      - chkconfig
       state: installed
 
   - name: Ensure OpenSCAP dependencies are running
