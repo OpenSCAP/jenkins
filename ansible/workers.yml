@@ -65,10 +65,23 @@
       - wget
       - lua
       - which
-      - procps-ng
       - initscripts
       - chkconfig
       state: installed
+
+  - name: Ensure procps is installed (OpenSCAP dependency)
+    package:
+      name:
+      - procps
+      state: installed
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] <= "6"
+
+  - name: Ensure procps-ng is installed (OpenSCAP dependency)
+    package:
+      name:
+      - procps-ng
+      state: installed
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] >= "7"
 
   - name: Ensure OpenSCAP dependencies are running
     service:
