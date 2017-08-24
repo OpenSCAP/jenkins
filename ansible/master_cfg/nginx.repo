@@ -1,0 +1,9 @@
+# I absolutely loathe the gpgcheck=0 and the fact that we use unsupported
+# upstream nginx, this is what our jenkins uses now though so we'll keep
+# it. Let's please improve on this abomination...
+
+[nginx]
+name=nginx repo
+baseurl=https://nginx.org/packages/rhel/7/$basearch/
+gpgcheck=0
+enabled=1

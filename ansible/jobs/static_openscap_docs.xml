@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@1.0.3">
+      <leastLoadDisabled>false</leastLoadDisabled>
+    </org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>rhel7</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command># cleanup
+rm -rf output
+mkdir output</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command># lets be wasteful
+rm -rf openscap openscap-1.2
+git clone https://github.com/OpenSCAP/openscap.git
+
+pushd openscap
+git checkout maint-1.2
+popd
+
+git clone -b maint-1.2 openscap openscap-1.2
+
+pushd openscap-1.2/docs
+doxygen Doxyfile
+cp -r html ../../output/openscap-1.2
+asciidoctor --destination-dir manual -b html5 manual/manual.adoc
+cp manual/manual.html ../../output/openscap-1.2/oscap_user_manual.html
+mkdir ../../output/openscap-1.2/images
+cp manual/images/vertical-logo.png ../../output/openscap-1.2/images
+popd</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command># lets be wasteful
+rm -rf scap-workbench scap-workbench-0.8 scap-workbench-1.0 scap-workbench-1.1
+git clone https://github.com/OpenSCAP/scap-workbench.git
+
+pushd scap-workbench
+git checkout v1-1
+git checkout 1.0.4
+git checkout 0.8.12
+popd
+
+git clone -b 0.8.12 scap-workbench scap-workbench-0.8
+git clone -b 1.0.4 scap-workbench scap-workbench-1.0
+git clone -b v1-1 scap-workbench scap-workbench-1.1
+
+pushd scap-workbench-0.8
+mkdir build
+cd build
+cmake ../
+make docs
+mkdir ../../output/scap-workbench-0.8
+cp doc/user_manual.html ../../output/scap-workbench-0.8/index.html
+popd
+
+pushd scap-workbench-1.0
+mkdir build
+cd build
+cmake ../
+make docs
+mkdir ../../output/scap-workbench-1.0
+cp doc/user_manual.html ../../output/scap-workbench-1.0/index.html
+popd
+
+pushd scap-workbench-1.1
+mkdir build
+cd build
+cmake ../
+make docs
+mkdir ../../output/scap-workbench-1.1
+cp doc/user_manual.html ../../output/scap-workbench-1.1/index.html
+popd
+</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>rm -rf scap-security-guide-install
+mkdir scap-security-guide-install
+
+# lets be wasteful
+rm -rf scap-security-guide
+git clone https://github.com/OpenSCAP/scap-security-guide.git
+
+pushd scap-security-guide
+cd build
+cmake ../
+make DESTDIR=`pwd`/scap-security-guide-install install -j $CPU_COUNT
+mkdir ../../output/ssg-guides
+cp scap-security-guide-install/usr/local/share/doc/scap-security-guide/guides/* ../../output/ssg-guides/
+popd</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>pushd output/
+zip ../static.open-scap.org.zip -r ./
+popd
+
+echo &quot;Upload the ZIP archive to OpenShift app and run &apos;unzip static.open-scap.org.zip&apos; in the ssh shell&quot;</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>static.open-scap.org.zip</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>true</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>false</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+  </publishers>
+  <buildWrappers/>
+</project>

@@ -1,0 +1,112 @@
+---
+- hosts: all
+
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: Set hostname
+    hostname:
+      name: "{{ inventory_hostname }}"
+
+  - name: Set up /etc/hosts with IPv4 of master and workers
+    lineinfile:
+      dest: /etc/hosts
+      regexp: ".*{{ item }}$"
+      line: "{{ hostvars[item].ansible_default_ipv4.address }} {{item}}"
+      state: present
+    when: hostvars[item].ansible_default_ipv4.address is defined
+    with_items: "{{ groups['all'] }}"
+
+  # RHEL6 optional RPMs are required for yum-cron and -devel packages
+  # we can't use yum_repository ansible module because it doesn't allow
+  # modification of existing repo files, it's mainly for creating new files
+  - name: Enable the RHEL6 server optional RPMs repo
+    ini_file:
+      path: /etc/yum.repos.d/redhat-rhui.repo
+      section: rhui-REGION-rhel-server-releases-optional
+      option: enabled
+      value: yes
+      create: no
+      state: present
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "6"
+
+  # RHEL7 optional RPMs are required for yum-cron and -devel packages
+  # we can't use yum_repository ansible module because it doesn't allow
+  # modification of existing repo files, it's mainly for creating new files
+  - name: Enable the RHEL7 server optional RPMs repo
+    ini_file:
+      path: /etc/yum.repos.d/redhat-rhui.repo
+      section: rhui-REGION-rhel-server-optional
+      option: enabled
+      value: yes
+      create: no
+      state: present
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7"
+
+  - name: Install cronie
+    package:
+      name: cronie
+      state: present
+
+  - name: Enable cronie service
+    service:
+      name: crond
+      enabled: yes
+      state: started
+
+# despite being called yum-cron this works on RHEL and Fedora
+  - name: Install yum-cron
+    package:
+      name: yum-cron
+      state: present
+
+  - name: Copy yum-cron.conf over
+    copy:
+      src: shared_cfg/yum-cron.conf
+      dest: /etc/yum/yum-cron.conf
+
+  - name: Enable yum-cron service
+    service:
+      name: yum-cron
+      enabled: yes
+      state: started
+
+  - name: Install tuned (performance tuning)
+    package:
+      name: tuned
+      state: present
+
+  - name: Start tuned (performance tuning)
+    service:
+      name: tuned
+      enabled: yes
+      state: started
+
+  - name: Enable the virtual-guest performance profile
+    shell: tuned-adm profile virtual-guest
+
+  - name: Disable kdump
+    service:
+      name: kdump
+      enabled: no
+      state: stopped
+    ignore_errors: yes  # fails if kdump is not even available
+
+  - name: Disable sssd  # we don't need its features
+    service:
+      name: sssd
+      enabled: no
+      state: stopped
+    ignore_errors: yes  # fails if sssd is not even available
+
+  - name: Disable password auth in sshd
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: "^#?PasswordAuthentication"
+      line: "PasswordAuthentication no"
+    notify: restart sshd
+
+  handlers:
+  - name: restart sshd
+    service: name=sshd state=restarted

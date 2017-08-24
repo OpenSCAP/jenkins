@@ -1,0 +1,136 @@
+---
+- hosts:
+  - worker_rhel6
+  - worker_rhel7
+  - worker_fedora
+
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: Set up Jenkins user
+    user:
+      name: jenkins
+      comment: "Jenkins user"
+
+  # we use the public key to connect to slaves from jenkins master
+  - name: Authorize master's jenkins user public key
+    authorized_key:
+      user: jenkins
+      key: "{{ lookup('file', 'generated_bits/master_id_rsa.pub') }}"
+      exclusive: yes  # only need one key for "jenkins" user, users can still connect as ec2-user
+      state: present
+
+  - name: Ensure general Jenkins dependencies are installed
+    package:
+      name:
+        - java
+
+  - name: Ensure general build dependencies are installed
+    package:
+      name:
+        - autoconf
+        - automake
+        - libtool
+        - doxygen
+        - git
+        - rubygems
+        - gawk
+        - gcc
+
+  - name: Ensure OpenSCAP dependencies are installed
+    package:
+      name:
+      - dbus-devel
+      - libacl-devel
+      - libblkid-devel
+      - libcap-devel
+      - libcurl-devel
+      - libgcrypt-devel
+      - libselinux-devel
+      - libxml2-devel
+      - libxslt-devel
+      - make
+      - openldap-devel
+      - pcre-devel
+      - perl-XML-Parser
+      - perl-XML-XPath
+      - perl-devel
+      - python-devel
+      - rpm-devel
+      - swig
+      - bzip2-devel
+      - GConf2-devel
+      - sendmail  # the openscap OVAL mitre requires sendmail to complete
+      - wget
+      - lua
+      - which
+      - initscripts
+      - chkconfig
+      state: installed
+
+  - name: Ensure procps is installed (OpenSCAP dependency)
+    package:
+      name:
+      - procps
+      state: installed
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] <= "6"
+
+  - name: Ensure procps-ng is installed (OpenSCAP dependency)
+    package:
+      name:
+      - procps-ng
+      state: installed
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] >= "7"
+
+  - name: Ensure OpenSCAP dependencies are running
+    service:
+      name: sendmail
+      enabled: yes
+      state: started
+
+  - name: Ensure SCAP Workbench dependencies are installed
+    package:
+      name:
+      - cmake
+      - gcc-c++
+      - openssh-clients
+      - util-linux
+      - openscap-devel
+      - qt-devel
+      - polkit
+      state: installed
+
+  - name: Ensure SCAP Workbench has asciidoctor installed
+    gem:
+      name: asciidoctor
+      user_install: no # let's install it everywhere
+
+  - name: Ensure SCAP Security Guide dependencies are installed
+    package:
+      name:
+      - cmake
+      - openscap-utils
+      - wget  # needed for the NIST test suite for SSG
+      state: installed
+
+  - name: Ensure OpenSCAP Daemon dependencies are installed
+    package:
+      name:
+      - dbus-python
+      - gobject-introspection
+      - pygobject2-devel
+      state: installed
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] >= "7"
+
+  - name: Ensure OpenSCAP Daemon extra dependencies are installed (Fedora only)
+    package:
+      name:
+      - python-gobject-base
+      - python-gobject
+      - python3-dbus
+      - pygobject3-devel
+      - python3-gobject-base
+      - python3-gobject
+      state: installed
+    when: ansible_distribution == 'Fedora'

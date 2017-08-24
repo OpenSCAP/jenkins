@@ -1,0 +1,4 @@
+ansible/*.retry
+
+# generated jenkins admin password, jenkins user public key...
+generated_bits/
