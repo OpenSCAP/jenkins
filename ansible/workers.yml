@@ -134,3 +134,25 @@
       - python3-gobject
       state: installed
     when: ansible_distribution == 'Fedora'
+
+  - name: Ensure OSCAP Anaconda dependencies are installed (RHEL7 only)
+    package:
+      name:
+      - anaconda
+      - python2-mock
+      - python-nose
+      - python-cpio
+      state: installed
+    when: ansible_distribution == 'RedHat' or ansible_distribution_version.split(".")[0] >= "7"
+
+  - name: Ensure OpenSCAP Anaconda dependencies are installed (Fedora only)
+    package:
+      name:
+      - anaconda
+      - python3-mock
+      - python3-nose
+      - python3-cpio
+      - python3-kickstart
+      state: installed
+    when: ansible_distribution == 'Fedora'
+

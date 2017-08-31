@@ -32,6 +32,8 @@
       - openscap-master
       - openscap-parametrized
       - openscap-pull-requests
+      - oscap-anaconda-addon-master
+      - oscap-anaconda-addon-rhel7
       - scap-security-guide-nightly-oval510-zip
       - scap-security-guide-nightly-zip
       - scap-security-guide-nist-testsuite
