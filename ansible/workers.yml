@@ -149,7 +149,9 @@
   - name: Ensure OpenSCAP Anaconda dependencies are installed (Fedora only)
     package:
       name:
+      - openscap-python3
       - anaconda
+      - python3-devel
       - python3-mock
       - python3-nose
       - python3-cpio
