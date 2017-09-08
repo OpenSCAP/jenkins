@@ -51,6 +51,7 @@
     <hudson.tasks.Shell>
       <command>#!/bin/bash
 mkdir -p ~/rpmbuild/SOURCES
+make po-pull
 make dist
 mv oscap-anaconda-addon-*.tar.gz ~/rpmbuild/SOURCES
 rpmbuild -ba oscap-anaconda-addon.spec</command>
