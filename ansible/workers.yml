@@ -142,6 +142,7 @@
       - python2-mock
       - python-nose
       - python-cpio
+      - zanata-python-client
       state: installed
     when: ansible_distribution == 'RedHat' or ansible_distribution_version.split(".")[0] >= "7"
 
@@ -153,6 +154,7 @@
       - python3-nose
       - python3-cpio
       - python3-kickstart
+      - zanata-python-client
       state: installed
     when: ansible_distribution == 'Fedora'
 
