@@ -144,7 +144,7 @@
       - python-cpio
       - zanata-python-client
       state: installed
-    when: ansible_distribution == 'RedHat' or ansible_distribution_version.split(".")[0] >= "7"
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] >= "7"
 
   - name: Ensure OpenSCAP Anaconda dependencies are installed (Fedora only)
     package:
@@ -153,6 +153,7 @@
       - python3-mock
       - python3-nose
       - python3-cpio
+      - python3-pycurl
       - python3-kickstart
       - zanata-python-client
       state: installed
