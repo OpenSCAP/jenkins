@@ -18,6 +18,29 @@
     when: hostvars[item].ansible_default_ipv4.address is defined
     with_items: "{{ groups['all'] }}"
 
+  # EPEL is needed for python-pip package, which is required for python-jenkins
+  # and lxml -these are required by jenkins_job module. jenkins_job is required
+  # by us (on master). Also required for linkchecker (on workers)
+  - name: Add EPEL 7
+    yum_repository:
+      name: epel
+      description: Extra Packages for Enterprise Linux 7 - $basearch
+      mirrorlist: https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
+      failovermethod: priority
+      gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7Server
+      gpgcheck: yes
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7"
+
+  - name: Add EPEL 6
+    yum_repository:
+      name: epel
+      description: Extra Packages for Enterprise Linux 6 - $basearch
+      mirrorlist: https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch
+      failovermethod: priority
+      gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6Server
+      gpgcheck: yes
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "6"
+
   # RHEL6 optional RPMs are required for yum-cron and -devel packages
   # we can't use yum_repository ansible module because it doesn't allow
   # modification of existing repo files, it's mainly for creating new files
@@ -43,6 +66,12 @@
       create: no
       state: present
     when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7"
+
+  - name: Install pip
+    package:
+      name:
+      - python-pip
+      state: installed
 
   - name: Install cronie
     package:
