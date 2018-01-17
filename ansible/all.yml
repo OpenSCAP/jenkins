@@ -1,4 +1,4 @@
 ---
-- include: shared.yml
-- include: master.yml
-- include: workers.yml
+- include_playbook: shared.yml
+- include_playbook: master.yml
+- include_playbook: workers.yml
