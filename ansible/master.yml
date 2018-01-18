@@ -301,6 +301,15 @@
       special_time: monthly
       job: "/root/letsencrypt.sh"
 
+  - name: Restart Jenkins every other day
+    cron:
+      name: "Periodic Jenkins restart"
+      user: "root"
+      minute: 8
+      hour: 4  # Jenkins master operates within the UTC timezone, so 4 AM UTC should be OK
+      day: */2
+      job: "/usr/bin/systemctl restart jenkins"
+
   handlers:
   - name: restart nginx
     service: name=nginx state=restarted
