@@ -114,6 +114,13 @@
       - wget  # needed for the NIST test suite for SSG
       state: installed
 
+  # this is the only common way across rhel/fedora.
+  # It's url-based, because original project is dead, and fork is not established yet
+  - name: Ensure linkchecker is installed for SCAP Security Guide checking 
+    pip:
+      name:
+      - git+https://github.com/linkcheck/linkchecker.git
+
   - name: Ensure OpenSCAP Daemon dependencies are installed
     package:
       name:

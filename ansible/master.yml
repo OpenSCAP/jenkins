@@ -84,18 +84,6 @@
       src: ./master_cfg/nginx.repo
       dest: /etc/yum.repos.d/nginx.repo
 
-# EPEL is needed for python-pip package, which is required for python-jenkins
-# and lxml -these are required by jenkins_job module. jenkins_job is required
-# by us.
-  - name: Add repository
-    yum_repository:
-      name: epel
-      description: Extra Packages for Enterprise Linux 7 - $basearch
-      mirrorlist: https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
-      failovermethod: priority
-      gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7Server
-      gpgcheck: yes
-    when: ansible_distribution == 'RedHat'
 
   - name: Ensure dependencies are installed
     package:
@@ -104,7 +92,6 @@
       - libselinux-python
       - initscripts
       - java
-      - python-pip
       - git  # jenkins itself needs git as well
       state: installed
 
