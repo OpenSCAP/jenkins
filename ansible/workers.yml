@@ -112,6 +112,7 @@
       - cmake
       - openscap-utils
       - wget  # needed for the NIST test suite for SSG
+      - PyYAML  # needed for the new SSG yaml port
       state: installed
 
   # this is the only common way across rhel/fedora.
