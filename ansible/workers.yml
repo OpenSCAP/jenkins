@@ -115,6 +115,20 @@
       - PyYAML  # needed for the new SSG yaml port
       state: installed
 
+  - name: Ensure SCAP Security Guide dependencies are installed (Fedora only)
+    package:
+      name:
+      - python2-jinja2  # needed for the new SSG yaml/jinja2 port
+      state: installed
+    when: ansible_distribution == 'Fedora'
+
+  - name: Ensure SCAP Security Guide dependencies are installed (RHEL only)
+    package:
+      name:
+      - python-jinja2  # needed for the new SSG yaml/jinja2 port
+      state: installed
+    when: ansible_distribution == 'RedHat'
+
   # this is the only common way across rhel/fedora.
   # It's url-based, because original project is dead, and fork is not established yet
   - name: Ensure linkchecker is installed for SCAP Security Guide checking 
