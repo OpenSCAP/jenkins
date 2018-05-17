@@ -23,6 +23,7 @@
       - managed-scripts
       - greenballs # not important, but better than blue ones
       - dynamic-axis
+      - embeddable-build-status # not stricly important, this is for build status in READMEs
     reset_jenkins_jobs: false  # set this to true if you want all the jobs reset, you probably only need to do this when you lose the jenkins home dir data
     jenkins_jobs:
       - openscap-custom-repo
