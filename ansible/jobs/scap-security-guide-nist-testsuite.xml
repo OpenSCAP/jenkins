@@ -24,17 +24,17 @@
         <hudson.model.TextParameterDefinition>
           <name>SUITE_FILENAME</name>
           <description>Define suite filename. Important to determine if download is required or not.</description>
-          <defaultValue>SCAP%20Content%20Validation%20Tool%201.2.zip</defaultValue>
+          <defaultValue>SCAP%20Content%20Validation%20Tool%201_2.zip</defaultValue>
         </hudson.model.TextParameterDefinition>
         <hudson.model.TextParameterDefinition>
           <name>SUITE_URL</name>
           <description>Used in combination of SUITE_FILENAME</description>
-          <defaultValue>http://scap.nist.gov/revision/$SUITE_FILENAME</defaultValue>
+          <defaultValue>https://csrc.nist.gov/CSRC/media/Projects/Security-Content-Automation-Protocol/tools/scap/1.2/$SUITE_FILENAME</defaultValue>
         </hudson.model.TextParameterDefinition>
         <hudson.model.TextParameterDefinition>
           <name>WHITELIST</name>
           <description>What error messages we want to skip. Whole error message per line
-ScapVal-1.2.14.1.zip should PASS without the need to whitelist
+ScapVal-1.2.1.16.zip should PASS without the need to whitelist
 some specific ERROR.</description>
           <defaultValue></defaultValue>
         </hudson.model.TextParameterDefinition>
@@ -79,19 +79,16 @@ some specific ERROR.</description>
 -DSSG_PRODUCT_DEBIAN8:BOOL=OFF
 -DSSG_PRODUCT_FEDORA:BOOL=OFF
 -DSSG_PRODUCT_FIREFOX:BOOL=OFF
--DSSG_PRODUCT_JBOSS_EAP5:BOOL=OFF
 -DSSG_PRODUCT_JBOSS_FUSE6:BOOL=OFF
 -DSSG_PRODUCT_JRE:BOOL=OFF
+-DSSG_PRODUCT_OL7:BOOL=OFF
 -DSSG_PRODUCT_OPENSUSE:BOOL=OFF
 -DSSG_PRODUCT_OSP7:BOOL=OFF
--DSSG_PRODUCT_RHEL5:BOOL=OFF
--DSSG_PRODUCT_RHEV3:BOOL=OFF
 -DSSG_PRODUCT_SUSE11:BOOL=OFF
 -DSSG_PRODUCT_SUSE12:BOOL=OFF
--DSSG_PRODUCT_UBUNTU1404:BOOL=OFF
--DSSG_PRODUCT_UBUNTU1604:BOOL=OFF
--DSSG_PRODUCT_WRLINUX:BOOL=OFF
--DSSG_PRODUCT_WEBMIN:BOOL=OFF</toolArgs>
+-DSSG_PRODUCT_UBUNTU14:BOOL=OFF
+-DSSG_PRODUCT_UBUNTU16:BOOL=OFF
+-DSSG_PRODUCT_WRLINUX:BOOL=OFF</toolArgs>
       <generator>Unix Makefiles</generator>
       <sourceDir>.</sourceDir>
       <buildType>Release</buildType>
