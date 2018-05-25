@@ -122,7 +122,8 @@
 
 cd build
 make -j $CPU_COUNT
-make -j $CPU_COUNT validate</command>
+# we don&apos;t want to check links for every PR
+CTEST_OUTPUT_ON_FAILURE=1 ctest -j $CPU_COUNT -E linkchecker </command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
