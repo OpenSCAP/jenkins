@@ -63,6 +63,13 @@
         </hudson.plugins.cmake.BuildToolStep>
       </toolSteps>
     </hudson.plugins.cmake.CmakeBuilder>
+    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.5.2">
+      <installationName>InSearchPath</installationName>
+      <workingDir>build</workingDir>
+      <toolArgs>-j 4
+--output-on-failure</toolArgs>
+      <toolId>ctest</toolId>
+    </hudson.plugins.cmake.CToolBuilder>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
 mv build/zipfile/scap-security-guide-*.zip scap-security-guide-nightly-oval-510.zip
