@@ -24,17 +24,17 @@
         <hudson.model.TextParameterDefinition>
           <name>SUITE_FILENAME</name>
           <description>Define suite filename. Important to determine if download is required or not.</description>
-          <defaultValue>SCAP%20Content%20Validation%20Tool%201.2.zip</defaultValue>
+          <defaultValue>SCAP%20Content%20Validation%20Tool%201_2.zip</defaultValue>
         </hudson.model.TextParameterDefinition>
         <hudson.model.TextParameterDefinition>
           <name>SUITE_URL</name>
           <description>Used in combination of SUITE_FILENAME</description>
-          <defaultValue>http://scap.nist.gov/revision/$SUITE_FILENAME</defaultValue>
+          <defaultValue>https://csrc.nist.gov/CSRC/media/Projects/Security-Content-Automation-Protocol/tools/scap/1.2/$SUITE_FILENAME</defaultValue>
         </hudson.model.TextParameterDefinition>
         <hudson.model.TextParameterDefinition>
           <name>WHITELIST</name>
           <description>What error messages we want to skip. Whole error message per line
-ScapVal-1.2.14.1.zip should PASS without the need to whitelist
+ScapVal-1.2.1.16.zip should PASS without the need to whitelist
 some specific ERROR.</description>
           <defaultValue></defaultValue>
         </hudson.model.TextParameterDefinition>
