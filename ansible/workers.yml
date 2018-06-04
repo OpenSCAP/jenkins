@@ -119,6 +119,7 @@
     package:
       name:
       - python2-jinja2  # needed for the new SSG yaml/jinja2 port
+      - python2-pytest  # needed for unit tests + coverage
       state: installed
     when: ansible_distribution == 'Fedora'
 
@@ -131,10 +132,17 @@
 
   # this is the only common way across rhel/fedora.
   # It's url-based, because original project is dead, and fork is not established yet
-  - name: Ensure linkchecker is installed for SCAP Security Guide checking 
+  - name: Ensure linkchecker is installed for SCAP Security Guide checking
     pip:
       name:
       - git+https://github.com/linkcheck/linkchecker.git
+
+  # RHEL may not have pytest
+  - name: Ensure pytest coverage support is installed
+    pip:
+      name:
+      - pytest
+    when: ansible_distribution == 'RedHat'
 
   - name: Ensure OpenSCAP Daemon dependencies are installed
     package:
