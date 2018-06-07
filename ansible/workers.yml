@@ -112,6 +112,13 @@
       name: asciidoctor
       user_install: no # let's install it everywhere
 
+  - name: Ensure Qt5 is installed (SCAP Workbench dependency)
+    package:
+      name:
+      - qt5-qtbase-devel
+      state: installed
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] >= "7"
+
   - name: Ensure SCAP Security Guide dependencies are installed
     package:
       name:
