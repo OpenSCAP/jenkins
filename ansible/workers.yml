@@ -29,14 +29,21 @@
   - name: Ensure general build dependencies are installed
     package:
       name:
-        - autoconf
-        - automake
-        - libtool
-        - doxygen
-        - git
-        - rubygems
-        - gawk
-        - gcc
+      - autoconf
+      - automake
+      - libtool
+      - doxygen
+      - git
+      - rubygems
+      - gawk
+      - gcc
+      - make
+      - ccache
+
+  - name: Copy ccache.conf over
+    copy:
+      src: shared_cfg/ccache.conf
+      dest: /etc/ccache.conf
 
   - name: Ensure OpenSCAP dependencies are installed
     package:
@@ -50,7 +57,6 @@
       - libselinux-devel
       - libxml2-devel
       - libxslt-devel
-      - make
       - openldap-devel
       - pcre-devel
       - perl-XML-Parser
