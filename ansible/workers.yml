@@ -38,6 +38,7 @@
       - gcc
       - make
       - ccache
+      - ninja-build # for faster PR build
 
   - name: Copy ccache.conf over
     copy:
