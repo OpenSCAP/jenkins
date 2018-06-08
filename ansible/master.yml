@@ -41,7 +41,6 @@
       - scap-security-guide-nist-testsuite
       - scap-security-guide-parameters
       - scap-security-guide-pull-requests
-      - scap-security-guide-rhel6-usgcb
       - scap-workbench-maint
       - scap-workbench-pull-requests
       - static_openscap_docs
