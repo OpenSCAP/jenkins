@@ -1,6 +1,5 @@
 ---
 - hosts:
-  - worker_rhel6
   - worker_rhel7
   - worker_fedora
 
