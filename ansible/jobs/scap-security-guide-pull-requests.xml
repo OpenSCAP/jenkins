@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<matrix-project plugin="matrix-project@1.8">
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
@@ -12,11 +12,11 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.25.1">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.0">
       <projectUrl>https://github.com/OpenSCAP/scap-security-guide/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@1.0.3">
+    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
       <leastLoadDisabled>false</leastLoadDisabled>
     </org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty>
     <hudson.model.ParametersDefinitionProperty>
@@ -25,11 +25,12 @@
           <name>sha1</name>
           <description>origin/pr/#PR/head</description>
           <defaultValue>origin/pr/1/head</defaultValue>
+          <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -48,15 +49,14 @@
     <submoduleCfg class="list"/>
     <extensions/>
   </scm>
-  <assignedNode>master</assignedNode>
+  <assignedNode>ssg_new</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
-    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.35.0">
+    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.40.0">
       <spec>H/5 * * * *</spec>
-      <latestVersion>3</latestVersion>
       <configVersion>3</configVersion>
       <adminlist>EMPTY_ADMIN_LIST
 </adminlist>
@@ -84,8 +84,11 @@
       <gitHubAuthId>EMPTY_GITHUB_AUTH_ID</gitHubAuthId>
       <triggerPhrase></triggerPhrase>
       <skipBuildPhrase>.*\[skip\W+ci\].*</skipBuildPhrase>
+      <blackListCommitAuthor></blackListCommitAuthor>
       <blackListLabels></blackListLabels>
       <whiteListLabels></whiteListLabels>
+      <includedRegions></includedRegions>
+      <excludedRegions></excludedRegions>
       <extensions>
         <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
           <commitStatusContext></commitStatusContext>
@@ -98,50 +101,38 @@
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
   </triggers>
   <concurrentBuild>true</concurrentBuild>
-  <axes>
-    <hudson.matrix.LabelAxis>
-      <name>label</name>
-      <values>
-        <string>EMPTY_NODE_1</string>
-      </values>
-    </hudson.matrix.LabelAxis>
-  </axes>
   <builders>
-    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.4.4">
+    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.5.2">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
-      <toolArgs>-DSSG_OVAL_SCHEMATRON_VALIDATION_ENABLED=off</toolArgs>
-      <generator>Unix Makefiles</generator>
+      <toolArgs>-DSSG_OVAL_SCHEMATRON_VALIDATION_ENABLED=OFF</toolArgs>
+      <generator>Ninja</generator>
       <sourceDir>.</sourceDir>
       <buildType>Release</buildType>
       <cleanBuild>true</cleanBuild>
-      <toolSteps/>
+      <toolSteps>
+        <hudson.plugins.cmake.BuildToolStep>
+          <args>all -j$CPU_COUNT</args>
+          <vars>DESTDIR=${WORKSPACE}/build/install_test</vars>
+          <withCmake>false</withCmake>
+        </hudson.plugins.cmake.BuildToolStep>
+      </toolSteps>
     </hudson.plugins.cmake.CmakeBuilder>
-    <hudson.tasks.Shell>
-      <command>#!/bin/bash
-
-cd build
-make -j $CPU_COUNT
-# we don&apos;t want to check links for every PR
-CTEST_OUTPUT_ON_FAILURE=1 ctest -j $CPU_COUNT -E linkchecker </command>
-    </hudson.tasks.Shell>
-    <hudson.tasks.Shell>
-      <command>#!/bin/bash
-
-cd build
-mkdir install_test
-make DESTDIR=`pwd`/install_test install -j $CPU_COUNT</command>
-    </hudson.tasks.Shell>
+    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.5.2">
+      <installationName>InSearchPath</installationName>
+      <workingDir>build</workingDir>
+      <toolArgs>-j $CPU_COUNT
+-E linkchecker
+--output-on-failure</toolArgs>
+      <toolId>ctest</toolId>
+    </hudson.plugins.cmake.CToolBuilder>
   </builders>
   <publishers/>
   <buildWrappers>
-    <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter plugin="build-name-setter@1.6.5">
+    <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter plugin="build-name-setter@1.6.9">
       <template>${GIT_BRANCH} - #${BUILD_NUMBER} - ${BUILD_STATUS}</template>
       <runAtStart>true</runAtStart>
       <runAtEnd>true</runAtEnd>
     </org.jenkinsci.plugins.buildnamesetter.BuildNameSetter>
   </buildWrappers>
-  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
-    <runSequentially>false</runSequentially>
-  </executionStrategy>
-</matrix-project>
+</project>
