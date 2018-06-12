@@ -88,7 +88,8 @@ some specific ERROR.</description>
 -DSSG_PRODUCT_SUSE12:BOOL=OFF
 -DSSG_PRODUCT_UBUNTU14:BOOL=OFF
 -DSSG_PRODUCT_UBUNTU16:BOOL=OFF
--DSSG_PRODUCT_WRLINUX:BOOL=OFF</toolArgs>
+-DSSG_PRODUCT_WRLINUX:BOOL=OFF
+-DSSG_JINJA2_CACHE_DIR="$WORKSPACE/../ssg_jinja2_cache"</toolArgs>
       <generator>Unix Makefiles</generator>
       <sourceDir>.</sourceDir>
       <buildType>Release</buildType>

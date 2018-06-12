@@ -105,7 +105,7 @@
     <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.5.2">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
-      <toolArgs>-DSSG_OVAL_SCHEMATRON_VALIDATION_ENABLED=OFF</toolArgs>
+      <toolArgs>-DSSG_OVAL_SCHEMATRON_VALIDATION_ENABLED=OFF -DSSG_JINJA2_CACHE_DIR="$WORKSPACE/../ssg_jinja2_cache"</toolArgs>
       <generator>Ninja</generator>
       <sourceDir>.</sourceDir>
       <buildType>Release</buildType>
