@@ -51,7 +51,7 @@
     <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.4.4">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
-      <toolArgs>-DSSG_OVAL_511_ENABLED:BOOL=OFF -DSSG_JINJA2_CACHE_DIR="$WORKSPACE/../ssg_jinja2_cache"</toolArgs>
+      <toolArgs>-DSSG_TARGET_OVAL_MINOR_VERSION:STRING=10 -DSSG_JINJA2_CACHE_DIR="$WORKSPACE/../ssg_jinja2_cache"</toolArgs>
       <generator>Unix Makefiles</generator>
       <sourceDir>.</sourceDir>
       <buildType>Release</buildType>
