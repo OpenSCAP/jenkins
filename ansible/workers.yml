@@ -126,7 +126,8 @@
     package:
       name:
       - python2-jinja2  # needed for the new SSG yaml/jinja2 port
-      - python2-pytest  # needed for unit tests + coverage
+      - python2-pytest
+      - python3-pytest  # needed for unit tests + coverage
       state: installed
     when: ansible_distribution == 'Fedora'
 
