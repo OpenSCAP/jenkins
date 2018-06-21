@@ -120,6 +120,7 @@
       - openscap-utils
       - wget  # needed for the NIST test suite for SSG
       - PyYAML  # needed for the new SSG yaml port
+      - ansible  # needed for ansible role syntax check
       state: installed
 
   - name: Ensure SCAP Security Guide dependencies are installed (Fedora only)
