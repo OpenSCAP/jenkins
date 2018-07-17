@@ -1,4 +1,6 @@
 # jenkins
-Issue tracker for our Jenkins continuous integration infrastructure.
 
-https://blog-zbynek.rhcloud.com/2015/10/12/contribution-to-openscap-with-jenkins/
+Issue tracker and public configuration repository for our [Jenkins continuous integration infrastructure](https://jenkins.open-scap.org).
+
+For guide on how to manage and deploy the Ansible-based configuration, see the [deployment guide](deployment.md).
+To read about tricky issues you may encounter, refer to the [maintenance guide](maintenance.md).
