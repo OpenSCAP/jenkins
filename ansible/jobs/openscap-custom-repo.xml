@@ -1,8 +1,7 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<project>
+<?xml version="1.0" encoding="UTF-8"?><project>
   <actions/>
-  <description>Job to test custom repository.&#xd;
-&#xd;
+  <description>Job to test custom repository.&#13;
+&#13;
 Please input only trusted repository.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -22,16 +21,16 @@ Please input only trusted repository.</description>
         <hudson.model.StringParameterDefinition>
           <name>REPO</name>
           <description>Remote OpenSCAP repository to test.</description>
-          <defaultValue></defaultValue>
+          <defaultValue/>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>BRANCH</name>
           <description>Remote repository branch.</description>
-          <defaultValue></defaultValue>
+          <defaultValue/>
         </hudson.model.StringParameterDefinition>
         <org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition plugin="nodelabelparameter@1.7.2">
           <name>NODE</name>
-          <description></description>
+          <description/>
           <allowedSlaves>
             <string>el7</string>
           </allowedSlaves>
@@ -73,7 +72,7 @@ Please input only trusted repository.</description>
 ulimit -c unlimited
 git clean -xf
 ./autogen.sh
-source &lt;( rpm --eval &apos;%configure --enable-sce&apos; )
+source &lt;( rpm --eval '%configure --enable-sce' )
 make -j $CPU_COUNT
 make -j $CPU_COUNT distcheck -k AM_COLOR_TESTS=always</command>
     </hudson.tasks.Shell>

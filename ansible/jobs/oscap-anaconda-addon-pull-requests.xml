@@ -1,19 +1,19 @@
 <?xml version='1.1' encoding='UTF-8'?>
-<project>
+<matrix-project plugin="matrix-project@1.13">
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <jenkins.model.BuildDiscarderProperty>
       <strategy class="hudson.tasks.LogRotator">
-        <daysToKeep>-1</daysToKeep>
-        <numToKeep>100</numToKeep>
+        <daysToKeep>365</daysToKeep>
+        <numToKeep>-1</numToKeep>
         <artifactDaysToKeep>-1</artifactDaysToKeep>
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.0">
-      <projectUrl>https://github.com/OpenSCAP/openscap-daemon/</projectUrl>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.1">
+      <projectUrl>https://github.com/OpenSCAP/oscap-anaconda-addon/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
     <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
@@ -30,12 +30,12 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.0">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
         <refspec>+refs/pull/*:refs/remotes/origin/pr/*</refspec>
-        <url>https://github.com/OpenSCAP/openscap-daemon</url>
+        <url>git://github.com/OpenSCAP/oscap-anaconda-addon.git</url>
         <credentialsId>openscap-ci</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
@@ -45,9 +45,6 @@
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-    <browser class="hudson.plugins.git.browser.GithubWeb">
-      <url>https://github.com/OpenSCAP/openscap-daemon</url>
-    </browser>
     <submoduleCfg class="list"/>
     <extensions/>
   </scm>
@@ -56,7 +53,7 @@
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
-    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.40.0">
+    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.42.0">
       <spec>H/5 * * * *</spec>
       <configVersion>3</configVersion>
       <adminlist>shawndwells
@@ -73,7 +70,7 @@ cipherboy</adminlist>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
       <useGitHubHooks>true</useGitHubHooks>
       <permitAll>false</permitAll>
-      <whitelist>baude matusmarhefka matejak</whitelist>
+      <whitelist> matejak dardok</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
@@ -106,21 +103,55 @@ cipherboy</adminlist>
         </org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
       </extensions>
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
+    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.29.1">
+      <spec></spec>
+    </com.cloudbees.jenkins.GitHubPushTrigger>
   </triggers>
   <concurrentBuild>true</concurrentBuild>
+  <axes>
+    <hudson.matrix.LabelAxis>
+      <name>distributions</name>
+      <values>
+        <string>fedora</string>
+        <string>rhel7</string>
+      </values>
+    </hudson.matrix.LabelAxis>
+    <ca.silvermaplesolutions.jenkins.plugins.daxis.DynamicAxis plugin="dynamic-axis@1.0.3">
+      <name>t_branch</name>
+      <values>
+        <string>ghprbTargetBranch</string>
+      </values>
+      <varName>ghprbTargetBranch</varName>
+      <axisValues>
+        <string>default</string>
+      </axisValues>
+    </ca.silvermaplesolutions.jenkins.plugins.daxis.DynamicAxis>
+  </axes>
+  <combinationFilter>!(t_branch==&quot;rhel7-branch&quot; &amp;&amp; distributions==&quot;fedora&quot;) &amp;&amp; !(t_branch==&quot;master&quot; &amp;&amp; distributions==&quot;rhel7&quot;)</combinationFilter>
   <builders>
     <hudson.tasks.Shell>
-      <command>pushd tests
-./make_check
-popd</command>
+      <command>#!/bin/bash
+git clean -xf
+make po-pull
+make dist
+mkdir -p ~/rpmbuild/SOURCES
+rm ~/rpmbuild/SOURCES/oscap-anaconda-addon-*.tar.gz
+mv oscap-anaconda-addon-*.tar.gz ~/rpmbuild/SOURCES
+rpmbuild -ba oscap-anaconda-addon.spec</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
   <buildWrappers>
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.2">
+      <colorMapName>xterm</colorMapName>
+    </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
     <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter plugin="build-name-setter@1.6.9">
-      <template>#${BUILD_NUMBER}</template>
+      <template>${GIT_BRANCH} - #${BUILD_NUMBER}</template>
       <runAtStart>true</runAtStart>
       <runAtEnd>true</runAtEnd>
     </org.jenkinsci.plugins.buildnamesetter.BuildNameSetter>
   </buildWrappers>
-</project>
+  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
+    <runSequentially>false</runSequentially>
+  </executionStrategy>
+</matrix-project>

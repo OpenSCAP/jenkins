@@ -1,5 +1,5 @@
 <?xml version='1.1' encoding='UTF-8'?>
-<project>
+<matrix-project plugin="matrix-project@1.13">
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
@@ -27,23 +27,6 @@
           <defaultValue>origin/pr/1/head</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
-        <org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition plugin="nodelabelparameter@1.7.2">
-          <name>everything</name>
-          <description></description>
-          <allowedSlaves>
-            <string>fedora</string>
-            <string>rhel7</string>
-          </allowedSlaves>
-          <defaultSlaves>
-            <string>fedora</string>
-            <string>rhel7</string>
-          </defaultSlaves>
-          <triggerIfResult>allowMultiSelectionForConcurrentBuilds</triggerIfResult>
-          <allowMultiNodeSelection>true</allowMultiNodeSelection>
-          <triggerConcurrentBuilds>true</triggerConcurrentBuilds>
-          <ignoreOfflineNodes>false</ignoreOfflineNodes>
-          <nodeEligibility class="org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility"/>
-        </org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -66,21 +49,25 @@
     <submoduleCfg class="list"/>
     <extensions/>
   </scm>
-  <canRoam>true</canRoam>
-  <disabled>false</disabled>
+  <assignedNode>ssg_new</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
     <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.42.0">
       <spec>H/5 * * * *</spec>
       <configVersion>3</configVersion>
-      <adminlist>shawndwells
-jan-cerny
-mpreisler
-dahaic
-yuumasato
-redhatrises
-cipherboy</adminlist>
+      <adminlist>shawndwells                                                    
+jan-cerny                                                                       
+iankko                                                                          
+mpreisler                                                                       
+ybznek                                                                          
+dahaic                                                                          
+yuumasato                                                                       
+rsprudencio                                                                     
+WesleyCeraso
+redhatrises</adminlist>
       <allowMembersOfWhitelistedOrgsAsAdmin>false</allowMembersOfWhitelistedOrgsAsAdmin>
       <orgslist></orgslist>
       <cron>H/5 * * * *</cron>
@@ -153,6 +140,7 @@ yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell Gary
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
   </triggers>
   <concurrentBuild>true</concurrentBuild>
+  <axes/>
   <builders>
     <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.5.2">
       <installationName>InSearchPath</installationName>
@@ -165,7 +153,6 @@ yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell Gary
       <toolSteps>
         <hudson.plugins.cmake.BuildToolStep>
           <args>all -j$CPU_COUNT</args>
-          <vars>DESTDIR=${WORKSPACE}/build/install_test</vars>
           <withCmake>false</withCmake>
         </hudson.plugins.cmake.BuildToolStep>
       </toolSteps>
@@ -180,19 +167,27 @@ yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell Gary
     </hudson.plugins.cmake.CToolBuilder>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
+
+cd build
+mkdir install_test
+make DESTDIR=`pwd`/install_test install -j $CPU_COUNT
+</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
 # Clean up the build directory
 rm -rf &quot;$WORKSPACE/build&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
   <buildWrappers>
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.2">
-      <colorMapName>css</colorMapName>
-    </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
     <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter plugin="build-name-setter@1.6.9">
       <template>${GIT_BRANCH} - #${BUILD_NUMBER} - ${BUILD_STATUS}</template>
       <runAtStart>true</runAtStart>
       <runAtEnd>true</runAtEnd>
     </org.jenkinsci.plugins.buildnamesetter.BuildNameSetter>
   </buildWrappers>
-</project>
+  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
+    <runSequentially>false</runSequentially>
+  </executionStrategy>
+</matrix-project>

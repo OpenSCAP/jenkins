@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -12,11 +12,11 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.25.1">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.1">
       <projectUrl>http://github.com/OpenSCAP/scap-security-guide/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@1.0.3">
+    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
       <leastLoadDisabled>false</leastLoadDisabled>
     </org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty>
     <hudson.model.ParametersDefinitionProperty>
@@ -25,23 +25,26 @@
           <name>SUITE_FILENAME</name>
           <description>Define suite filename. Important to determine if download is required or not.</description>
           <defaultValue>SCAP%20Content%20Validation%20Tool%201_2.zip</defaultValue>
+          <trim>false</trim>
         </hudson.model.TextParameterDefinition>
         <hudson.model.TextParameterDefinition>
           <name>SUITE_URL</name>
           <description>Used in combination of SUITE_FILENAME</description>
           <defaultValue>https://csrc.nist.gov/CSRC/media/Projects/Security-Content-Automation-Protocol/tools/scap/1.2/$SUITE_FILENAME</defaultValue>
+          <trim>false</trim>
         </hudson.model.TextParameterDefinition>
         <hudson.model.TextParameterDefinition>
           <name>WHITELIST</name>
           <description>What error messages we want to skip. Whole error message per line
-ScapVal-1.2.1.16.zip should PASS without the need to whitelist
+ScapVal-1.2.14.1.zip should PASS without the need to whitelist
 some specific ERROR.</description>
           <defaultValue></defaultValue>
+          <trim>false</trim>
         </hudson.model.TextParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -65,22 +68,25 @@ some specific ERROR.</description>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
-    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.25.1">
-      <spec></spec>
-    </com.cloudbees.jenkins.GitHubPushTrigger>
+    <hudson.triggers.SCMTrigger>
+      <spec>@midnight</spec>
+      <ignorePostCommitHooks>false</ignorePostCommitHooks>
+    </hudson.triggers.SCMTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <builders>
-    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.4.4">
+    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.5.2">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
-      <toolArgs>-DSSG_OVAL_511_ENABLED:BOOL=OFF
+      <toolArgs>-DSSG_TARGET_OVAL_MINOR_VERSION:STRING=10
 -DSSG_PRODUCT_CHROMIUM:BOOL=OFF
 -DSSG_PRODUCT_DEBIAN8:BOOL=OFF
 -DSSG_PRODUCT_FEDORA:BOOL=OFF
 -DSSG_PRODUCT_FIREFOX:BOOL=OFF
+-DSSG_PRODUCT_JBOSS_EAP6:BOOL=OFF
 -DSSG_PRODUCT_JBOSS_FUSE6:BOOL=OFF
 -DSSG_PRODUCT_JRE:BOOL=OFF
+-DSSG_PRODUCT_OCP3:BOOL=OFF
 -DSSG_PRODUCT_OL7:BOOL=OFF
 -DSSG_PRODUCT_OPENSUSE:BOOL=OFF
 -DSSG_PRODUCT_OSP7:BOOL=OFF
@@ -89,7 +95,7 @@ some specific ERROR.</description>
 -DSSG_PRODUCT_UBUNTU14:BOOL=OFF
 -DSSG_PRODUCT_UBUNTU16:BOOL=OFF
 -DSSG_PRODUCT_WRLINUX:BOOL=OFF
--DSSG_JINJA2_CACHE_DIR="$WORKSPACE/../ssg_jinja2_cache"</toolArgs>
+-DSSG_JINJA2_CACHE_DIR=&quot;$WORKSPACE/../ssg_jinja2_cache&quot;</toolArgs>
       <generator>Unix Makefiles</generator>
       <sourceDir>.</sourceDir>
       <buildType>Release</buildType>
@@ -210,7 +216,7 @@ do
 	pushd build &amp;&amp; {
 		result=$(mktemp -p &quot;$PWD&quot;)
 	
-		CLASSPATH=&quot;$SUITE_DIR&quot; java -jar &quot;$SUITE_JAR&quot; -scapversion 1.2 -file &quot;$PWD/ssg-rhel$i-ds.xml&quot; | tee &quot;$result&quot;
+		CLASSPATH=&quot;$SUITE_DIR&quot; java -Xmx600m -jar &quot;$SUITE_JAR&quot; -scapversion 1.2 -file &quot;$PWD/ssg-rhel$i-ds.xml&quot; | tee &quot;$result&quot;
 		transformateResult &quot;$result&quot; &gt; &quot;$WORKSPACE/summary-rhel$i.xml&quot;
 
 		# If at least one &apos;ERROR&apos; was found by ScapVal
@@ -225,17 +231,23 @@ do
 	}
 	popd
 done
+rm -rf build
 
 exit $exitVal</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.tasks.junit.JUnitResultArchiver plugin="junit@1.19">
+    <hudson.tasks.junit.JUnitResultArchiver plugin="junit@1.24">
       <testResults>summary-rhel*.xml</testResults>
       <keepLongStdio>false</keepLongStdio>
       <healthScaleFactor>1.0</healthScaleFactor>
       <allowEmptyResults>false</allowEmptyResults>
     </hudson.tasks.junit.JUnitResultArchiver>
+    <hudson.tasks.Mailer plugin="mailer@1.21">
+      <recipients>openscap-maint@redhat.com</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
 </project>
