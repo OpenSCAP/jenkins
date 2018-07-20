@@ -1,5 +1,6 @@
 ---
 - hosts:
+  - worker_rhel6
   - worker_rhel7
   - worker_fedora
 
@@ -74,6 +75,13 @@
       - initscripts
       - chkconfig
       state: installed
+
+  - name: Ensure procps is installed (OpenSCAP dependency)
+    package:
+      name:
+      - procps
+      state: installed
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] <= "6"
 
   - name: Ensure procps-ng is installed (OpenSCAP dependency)
     package:
