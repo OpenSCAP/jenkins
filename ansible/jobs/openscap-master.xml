@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -12,11 +12,11 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@1.0.3">
+    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
       <leastLoadDisabled>false</leastLoadDisabled>
     </org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.5.0">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -30,36 +30,59 @@
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
     <submoduleCfg class="list"/>
-    <extensions/>
+    <extensions>
+      <hudson.plugins.git.extensions.impl.CleanCheckout/>
+    </extensions>
   </scm>
-  <canRoam>true</canRoam>
+  <assignedNode>fedora || rhel7</assignedNode>
+  <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
-    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.19.2">
+    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.29.1">
       <spec></spec>
     </com.cloudbees.jenkins.GitHubPushTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <builders>
+    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.5.2">
+      <installationName>InSearchPath</installationName>
+      <workingDir>build/</workingDir>
+      <generator>Ninja</generator>
+      <sourceDir>.</sourceDir>
+      <buildType>Debug</buildType>
+      <cleanBuild>true</cleanBuild>
+      <toolSteps>
+        <hudson.plugins.cmake.BuildToolStep>
+          <args>all</args>
+          <vars>-j $CPU_COUNT</vars>
+          <withCmake>false</withCmake>
+        </hudson.plugins.cmake.BuildToolStep>
+      </toolSteps>
+    </hudson.plugins.cmake.CmakeBuilder>
+    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.5.2">
+      <installationName>InSearchPath</installationName>
+      <workingDir>build</workingDir>
+      <toolArgs>-j $CPU_COUNT
+--output-on-failure</toolArgs>
+      <toolId>ctest</toolId>
+    </hudson.plugins.cmake.CToolBuilder>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-./autogen.sh
-source &lt;( rpm --eval &apos;%configure --enable-sce&apos; )
-make -j $CPU_COUNT
-make distcheck -j $CPU_COUNT -k AM_COLOR_TESTS=always</command>
+# Clean up the build directory
+rm -rf &quot;$WORKSPACE/build&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.tasks.Mailer plugin="mailer@1.17">
+    <hudson.tasks.Mailer plugin="mailer@1.21">
       <recipients>openscap-maint@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers>
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.4.2">
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.2">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
   </buildWrappers>

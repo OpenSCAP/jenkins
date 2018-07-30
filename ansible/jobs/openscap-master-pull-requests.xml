@@ -6,14 +6,14 @@
   <properties>
     <jenkins.model.BuildDiscarderProperty>
       <strategy class="hudson.tasks.LogRotator">
-        <daysToKeep>5</daysToKeep>
-        <numToKeep>-1</numToKeep>
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>100</numToKeep>
         <artifactDaysToKeep>-1</artifactDaysToKeep>
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.1">
-      <projectUrl>https://github.com/OpenSCAP/scap-security-guide/</projectUrl>
+      <projectUrl>https://github.com/OpenSCAP/openscap/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
     <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
@@ -28,19 +28,18 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition plugin="nodelabelparameter@1.7.2">
-          <name>everything</name>
+          <name>node</name>
           <description></description>
           <allowedSlaves>
-            <string>fedora</string>
-            <string>rhel7</string>
+            <string>ALL (no restriction)</string>
           </allowedSlaves>
           <defaultSlaves>
             <string>fedora</string>
             <string>rhel7</string>
           </defaultSlaves>
-          <triggerIfResult>allowMultiSelectionForConcurrentBuilds</triggerIfResult>
-          <allowMultiNodeSelection>true</allowMultiNodeSelection>
-          <triggerConcurrentBuilds>true</triggerConcurrentBuilds>
+          <triggerIfResult>multiSelectionDisallowed</triggerIfResult>
+          <allowMultiNodeSelection>false</allowMultiNodeSelection>
+          <triggerConcurrentBuilds>false</triggerConcurrentBuilds>
           <ignoreOfflineNodes>false</ignoreOfflineNodes>
           <nodeEligibility class="org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility"/>
         </org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition>
@@ -51,9 +50,8 @@
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <name>origin</name>
         <refspec>+refs/pull/*:refs/remotes/origin/pr/*</refspec>
-        <url>git://github.com/OpenSCAP/scap-security-guide.git</url>
+        <url>git://github.com/OpenSCAP/openscap.git</url>
         <credentialsId>openscap-ci</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
@@ -66,7 +64,8 @@
     <submoduleCfg class="list"/>
     <extensions/>
   </scm>
-  <canRoam>true</canRoam>
+  <assignedNode>fedora || rhel7</assignedNode>
+  <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
@@ -88,40 +87,42 @@ cipherboy</adminlist>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
       <useGitHubHooks>true</useGitHubHooks>
       <permitAll>false</permitAll>
-      <whitelist>shawndwells                                                    
-jeffblank                                                                       
-iankko                                                                          
-redhatrises                                                                     
-diastelo                                                                        
+      <whitelist>isimluk                                                        
+dkopecek                                                                        
 mpreisler                                                                       
-isimluk                                                                         
-lsteinke                                                                        
-lukek1                                                                          
-davesmith2                                                                      
-thenefield                                                                      
-mpalmi                                                                          
+pvrabec                                                                         
+theinric                                                                        
 jan-cerny                                                                       
-ykhodorkovskiy                                                                  
-kpeeples                                                                        
-pcactr                                                                          
-rwilmoth                                                                        
-neo-aeon                                                                        
-k-stailey                                                                       
-gregelin                                                                        
-agilmore2                                                                       
-rodneymercer                                                                    
-joenall                                                                         
-finkr                                                                           
-rrenshaw                                                                        
-fcaviggia                                                                       
+bachradsusi                                                                     
+ybznek                                                                          
+msrubar                                                                         
+mtrmac                                                                          
 fslavin                                                                         
-csreynolds                                                                      
+jacobvar                                                                        
+iankko                                                                          
+rwmjones                                                                        
+Jakuje                                                                          
+chifflier                                                                       
+iljakuklic                                                                      
+redhatrises                                                                     
+shawndwells                                                                     
+gregelin                                                                        
+baude                                                                           
+rladkins                                                                        
+mgrepl                                                                          
+msmeissn                                                                        
 openprivacy                                                                     
-jahnje carbonin jeffcpullen electrosenpai pthierry38 GautamSatish jcpunk jglemza roysjosh MollyJoBault thetuxracer radzy chuckatkins ktbzimm
-yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell GaryGapinski hooksie1 chrisruffalo kharyam matejak lfisher47 rybal06 rchayes cakernstock ptitoliv nathanpeters008 matusmarhefka tedbrunell rlucente-se-jboss nzwulfin OnceUponALoop iokomin mildass dericcrago jamescassell xiruiyang sshimko kenyon abergmann cipherboy ajd394</whitelist>
+bushong1                                                                        
+zemb                                                                            
+jokajak                                                                         
+radzy                                                                           
+yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlcharton matejak JennyUWaterloo cipherboy abergmann</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
+        <org.jenkinsci.plugins.ghprb.GhprbBranch>
+          <branch>master</branch>
+        </org.jenkinsci.plugins.ghprb.GhprbBranch>
         <org.jenkinsci.plugins.ghprb.GhprbBranch>
           <branch></branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
@@ -145,6 +146,12 @@ yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell Gary
           <startedStatus></startedStatus>
           <statusUrl></statusUrl>
           <addTestResults>false</addTestResults>
+          <completedStatus>
+            <org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage>
+              <message></message>
+              <result>SUCCESS</result>
+            </org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage>
+          </completedStatus>
         </org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
         <org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
           <overrideGlobal>false</overrideGlobal>
@@ -154,18 +161,21 @@ yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell Gary
   </triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>
+    <com.cloudbees.jenkins.GitHubSetCommitStatusBuilder plugin="github@1.29.1">
+      <statusMessage>
+        <content></content>
+      </statusMessage>
+      <contextSource class="org.jenkinsci.plugins.github.status.sources.DefaultCommitContextSource"/>
+    </com.cloudbees.jenkins.GitHubSetCommitStatusBuilder>
     <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.5.2">
       <installationName>InSearchPath</installationName>
-      <workingDir>build</workingDir>
-      <toolArgs>-DSSG_OVAL_SCHEMATRON_VALIDATION_ENABLED=OFF -DSSG_JINJA2_CACHE_DIR=&quot;$WORKSPACE/../ssg_jinja2_cache&quot;</toolArgs>
-      <generator>Ninja</generator>
+      <workingDir>build/</workingDir>
       <sourceDir>.</sourceDir>
-      <buildType>Release</buildType>
+      <buildType>Debug</buildType>
       <cleanBuild>true</cleanBuild>
       <toolSteps>
         <hudson.plugins.cmake.BuildToolStep>
-          <args>all -j$CPU_COUNT</args>
-          <vars>DESTDIR=${WORKSPACE}/build/install_test</vars>
+          <args>all -j $CPU_COUNT</args>
           <withCmake>false</withCmake>
         </hudson.plugins.cmake.BuildToolStep>
       </toolSteps>
@@ -174,7 +184,6 @@ yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell Gary
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
       <toolArgs>-j $CPU_COUNT
--E linkchecker
 --output-on-failure</toolArgs>
       <toolId>ctest</toolId>
     </hudson.plugins.cmake.CToolBuilder>
@@ -184,13 +193,19 @@ yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell Gary
 rm -rf &quot;$WORKSPACE/build&quot;</command>
     </hudson.tasks.Shell>
   </builders>
-  <publishers/>
+  <publishers>
+    <hudson.tasks.Mailer plugin="mailer@1.21">
+      <recipients></recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
   <buildWrappers>
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.2">
       <colorMapName>css</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
     <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter plugin="build-name-setter@1.6.9">
-      <template>${GIT_BRANCH} - #${BUILD_NUMBER} - ${BUILD_STATUS}</template>
+      <template>${GIT_BRANCH} - #${BUILD_NUMBER}</template>
       <runAtStart>true</runAtStart>
       <runAtEnd>true</runAtEnd>
     </org.jenkinsci.plugins.buildnamesetter.BuildNameSetter>

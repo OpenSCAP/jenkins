@@ -1,10 +1,10 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@1.0.3">
+    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
       <leastLoadDisabled>false</leastLoadDisabled>
     </org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty>
   </properties>
@@ -44,10 +44,11 @@ popd</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command># lets be wasteful
-rm -rf scap-workbench scap-workbench-0.8 scap-workbench-1.0 scap-workbench-1.1
+rm -rf scap-workbench scap-workbench-0.8 scap-workbench-1.0 scap-workbench-1.1 scap-workbench-1.2
 git clone https://github.com/OpenSCAP/scap-workbench.git
 
 pushd scap-workbench
+git checkout v1-2
 git checkout v1-1
 git checkout 1.0.4
 git checkout 0.8.12
@@ -56,6 +57,7 @@ popd
 git clone -b 0.8.12 scap-workbench scap-workbench-0.8
 git clone -b 1.0.4 scap-workbench scap-workbench-1.0
 git clone -b v1-1 scap-workbench scap-workbench-1.1
+git clone -b v1-2 scap-workbench scap-workbench-1.2
 
 pushd scap-workbench-0.8
 mkdir build
@@ -76,12 +78,21 @@ cp doc/user_manual.html ../../output/scap-workbench-1.0/index.html
 popd
 
 pushd scap-workbench-1.1
-mkdir build
+mkdir -p build
 cd build
 cmake ../
 make docs
 mkdir ../../output/scap-workbench-1.1
 cp doc/user_manual.html ../../output/scap-workbench-1.1/index.html
+popd
+
+pushd scap-workbench-1.2
+mkdir -p build
+cd build
+cmake ../
+make docs
+mkdir ../../output/scap-workbench-1.2
+cp doc/user_manual.html ../../output/scap-workbench-1.2/index.html
 popd
 </command>
     </hudson.tasks.Shell>

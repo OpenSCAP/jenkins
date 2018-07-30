@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -12,11 +12,11 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.25.1">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.0">
       <projectUrl>https://github.com/OpenSCAP/openscap/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@1.0.3">
+    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
       <leastLoadDisabled>false</leastLoadDisabled>
     </org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty>
     <hudson.model.ParametersDefinitionProperty>
@@ -25,17 +25,18 @@
           <name>sha1</name>
           <description>origin/pr/#PR/head</description>
           <defaultValue>origin/pr/1/head</defaultValue>
+          <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
         <refspec>+refs/pull/*:refs/remotes/origin/pr/*</refspec>
         <url>git://github.com/OpenSCAP/openscap.git</url>
-        <credentialsId>EMPTY_CREDENTIALS_ID</credentialsId>
+        <credentialsId>openscap-ci</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -52,12 +53,16 @@
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
-    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.35.0">
+    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.40.0">
       <spec>H/5 * * * *</spec>
-      <latestVersion>3</latestVersion>
       <configVersion>3</configVersion>
-      <adminlist>EMPTY_ADMIN_LIST
-</adminlist>
+      <adminlist>shawndwells
+jan-cerny
+mpreisler
+dahaic
+yuumasato
+redhatrises
+cipherboy</adminlist>
       <allowMembersOfWhitelistedOrgsAsAdmin>false</allowMembersOfWhitelistedOrgsAsAdmin>
       <orgslist></orgslist>
       <cron>H/5 * * * *</cron>
@@ -65,25 +70,55 @@
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
       <useGitHubHooks>true</useGitHubHooks>
       <permitAll>false</permitAll>
-      <whitelist>EMPTY_WHITELIST
-</whitelist>
+      <whitelist>isimluk                                                        
+dkopecek                                                                        
+mpreisler                                                                       
+pvrabec                                                                         
+theinric                                                                        
+jan-cerny                                                                       
+bachradsusi                                                                     
+ybznek                                                                          
+msrubar                                                                         
+mtrmac                                                                          
+fslavin                                                                         
+jacobvar                                                                        
+iankko                                                                          
+rwmjones                                                                        
+Jakuje                                                                          
+chifflier                                                                       
+iljakuklic                                                                      
+redhatrises                                                                     
+shawndwells                                                                     
+gregelin                                                                        
+baude                                                                           
+rladkins                                                                        
+mgrepl                                                                          
+msmeissn                                                                        
+openprivacy                                                                     
+bushong1                                                                        
+zemb                                                                            
+jokajak                                                                         
+radzy                                                                           
+yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlcharton matejak JennyUWaterloo cipherboy abergmann</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
         <org.jenkinsci.plugins.ghprb.GhprbBranch>
-          <branch></branch>
+          <branch>maint-1.2</branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
       </whiteListTargetBranches>
       <blackListTargetBranches>
         <org.jenkinsci.plugins.ghprb.GhprbBranch>
-          <branch></branch>
+          <branch>master</branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
       </blackListTargetBranches>
-      <gitHubAuthId>EMPTY_GITHUB_AUTH_ID</gitHubAuthId>
       <triggerPhrase></triggerPhrase>
       <skipBuildPhrase>.*\[skip\W+ci\].*</skipBuildPhrase>
+      <blackListCommitAuthor></blackListCommitAuthor>
       <blackListLabels></blackListLabels>
       <whiteListLabels></whiteListLabels>
+      <includedRegions></includedRegions>
+      <excludedRegions></excludedRegions>
       <extensions>
         <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
           <commitStatusContext></commitStatusContext>
@@ -98,12 +133,15 @@
             </org.jenkinsci.plugins.ghprb.extensions.comments.GhprbBuildResultMessage>
           </completedStatus>
         </org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
+        <org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
+          <overrideGlobal>false</overrideGlobal>
+        </org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
       </extensions>
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
   </triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>
-    <com.cloudbees.jenkins.GitHubSetCommitStatusBuilder plugin="github@1.25.1">
+    <com.cloudbees.jenkins.GitHubSetCommitStatusBuilder plugin="github@1.29.0">
       <statusMessage>
         <content></content>
       </statusMessage>
@@ -112,35 +150,28 @@
     <hudson.tasks.Shell>
       <command>#!/bin/bash
 ulimit -c unlimited
-git clean -xf
+git clean -xfd
+
+export VERBOSE=yes  # The test suite output should be more helpful
 ./autogen.sh
 source &lt;( rpm --eval &apos;%configure --enable-sce&apos; )
 make -j $CPU_COUNT 
-make distcheck -j $CPU_COUNT -k AM_COLOR_TESTS=always</command>
+make distcheck -j $CPU_COUNT -k AM_COLOR_TESTS=always
+</command>
     </hudson.tasks.Shell>
-    <org.jenkinsci.plugins.managedscripts.ScriptBuildStep plugin="managed-scripts@1.3">
-      <buildStepId>org.jenkinsci.plugins.managedscripts.ScriptConfig1445854237346</buildStepId>
-      <tokenized>false</tokenized>
-    </org.jenkinsci.plugins.managedscripts.ScriptBuildStep>
   </builders>
   <publishers>
-    <hudson.tasks.Mailer plugin="mailer@1.20">
+    <hudson.tasks.Mailer plugin="mailer@1.21">
       <recipients></recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
-    <com.cloudbees.jenkins.GitHubCommitNotifier plugin="github@1.25.1">
-      <statusMessage>
-        <content></content>
-      </statusMessage>
-      <resultOnFailure>FAILURE</resultOnFailure>
-    </com.cloudbees.jenkins.GitHubCommitNotifier>
   </publishers>
   <buildWrappers>
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.0">
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.2">
       <colorMapName>css</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-    <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter plugin="build-name-setter@1.6.5">
+    <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter plugin="build-name-setter@1.6.9">
       <template>${GIT_BRANCH} - #${BUILD_NUMBER}</template>
       <runAtStart>true</runAtStart>
       <runAtEnd>true</runAtEnd>

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -12,15 +12,35 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.25.1">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.1">
       <projectUrl>http://github.com/OpenSCAP/scap-security-guide/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@1.0.3">
+    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
       <leastLoadDisabled>false</leastLoadDisabled>
     </org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition plugin="nodelabelparameter@1.7.2">
+          <name></name>
+          <description></description>
+          <allowedSlaves>
+            <string>rhel6</string>
+            <string>rhel7</string>
+          </allowedSlaves>
+          <defaultSlaves>
+            <string>fedora</string>
+          </defaultSlaves>
+          <triggerIfResult>allowMultiSelectionForConcurrentBuilds</triggerIfResult>
+          <allowMultiNodeSelection>true</allowMultiNodeSelection>
+          <triggerConcurrentBuilds>true</triggerConcurrentBuilds>
+          <ignoreOfflineNodes>false</ignoreOfflineNodes>
+          <nodeEligibility class="org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility"/>
+        </org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -41,24 +61,26 @@
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers>
-    <hudson.triggers.TimerTrigger>
-      <spec>@midnight</spec>
-    </hudson.triggers.TimerTrigger>
-  </triggers>
-  <concurrentBuild>false</concurrentBuild>
+  <triggers/>
+  <concurrentBuild>true</concurrentBuild>
   <builders>
-    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.4.4">
+    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.5.2">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
-      <toolArgs>-DSSG_JINJA2_CACHE_DIR="$WORKSPACE/../ssg_jinja2_cache"</toolArgs>
+      <toolArgs>-DSSG_JINJA2_CACHE_DIR=&quot;$WORKSPACE/../ssg_jinja2_cache&quot;</toolArgs>
       <generator>Unix Makefiles</generator>
       <sourceDir>.</sourceDir>
       <buildType>Release</buildType>
       <cleanBuild>true</cleanBuild>
       <toolSteps>
         <hudson.plugins.cmake.BuildToolStep>
+          <args>all</args>
+          <vars>-j $CPU_COUNT</vars>
+          <withCmake>false</withCmake>
+        </hudson.plugins.cmake.BuildToolStep>
+        <hudson.plugins.cmake.BuildToolStep>
           <args>zipfile</args>
+          <vars>-j $CPU_COUNT</vars>
           <withCmake>false</withCmake>
         </hudson.plugins.cmake.BuildToolStep>
       </toolSteps>
@@ -66,13 +88,16 @@
     <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.5.2">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
-      <toolArgs>-j 4
---output-on-failure</toolArgs>
+      <toolArgs>-j $CPU_COUNT
+--output-on-failure
+-E linkchecker</toolArgs>
       <toolId>ctest</toolId>
     </hudson.plugins.cmake.CToolBuilder>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-mv build/zipfile/scap-security-guide-*.zip scap-security-guide-nightly.zip</command>
+mv build/zipfile/scap-security-guide-*.zip scap-security-guide-nightly.zip
+# Clean up the build directory
+rm -rf &quot;$WORKSPACE/build&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -84,6 +109,11 @@ mv build/zipfile/scap-security-guide-*.zip scap-security-guide-nightly.zip</comm
       <defaultExcludes>true</defaultExcludes>
       <caseSensitive>true</caseSensitive>
     </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.Mailer plugin="mailer@1.21">
+      <recipients>openscap-maint@redhat.com</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
 </project>
