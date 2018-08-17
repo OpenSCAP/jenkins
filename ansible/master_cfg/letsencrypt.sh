@@ -12,6 +12,19 @@ log="/var/log/letsencrypt-renewal.log"
 
 echo "=====BEGIN RENEWAL $(date)=====" >> $log
 
+# To handle deployments via Ansible, first check if the server.{crt,key} are
+# symlinks; if not, remove existing content and replace them with links.
+
+if [ ! -L /etc/nginx/tls/server.crt ]; then
+    rm -f /etc/nginx/tls/server.crt
+    ln -s /etc/letsencrypt/live/jenkins.open-scap.org/fullchain.pem /etc/nginx/tls/server.crt
+fi
+
+if [ ! -L /etc/nginx/tls/server.key ]; then
+    rm -f /etc/nginx/tls/server.key
+    ln -s /etc/letsencrypt/live/jenkins.open-scap.org/privkey.pem /etc/nginx/tls/server.key
+fi
+
 # TODO: Change the email to something that makes more sense
 /root/letsencrypt/letsencrypt-auto certonly --keep-until-expiring --webroot -w /letsencrypt_public_html/ -d jenkins.open-scap.org -m mpreisle@redhat.com --agree-tos -n --post-hook "systemctl restart nginx" >> $log 2>&1
 
