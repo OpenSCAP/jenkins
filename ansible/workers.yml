@@ -13,6 +13,11 @@
       name: jenkins
       comment: "Jenkins user"
 
+  - name: Install prerequisites for authorized keys addition
+    package:
+      name:
+      - libselinux-python
+
   # we use the public key to connect to slaves from jenkins master
   - name: Authorize master's jenkins user public key
     authorized_key:
