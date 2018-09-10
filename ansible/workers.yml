@@ -113,9 +113,9 @@
       - polkit
       state: installed
 
-  - name: Ensure SCAP Workbench has asciidoctor installed
+  - name: Ensure SCAP Workbench has asciidoc installed
     gem:
-      name: asciidoctor
+      name: asciidoc
       user_install: no # let's install it everywhere
 
   - name: Ensure Qt5 is installed (SCAP Workbench dependency)
