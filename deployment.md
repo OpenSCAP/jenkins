@@ -21,15 +21,18 @@ This document describes current settings. You maybe want to use different config
 + You need some machines to do testing.
 + Usually you want to have different systems to do tests.
 + Theoretically you can use bare metal machines, virtual machines, containers etc.
-+ We currently run Jenkins on AWS
++ We currently run Jenkins on Wedos VPS.
 
 ### How to connect to the machine
 We use Ansible for orchestration of the entire Jenkins infrastructure. Please see the
-inventory.ini file for a list of machines and their IPs. These machines currently run
-in AWS. If you want your public key added to those machines please contact the admin
-that maintains the AWS account.
+inventory.ini file for a list of machines and their IPs.
+If you want your public key added to those machines please contact the admin
+that maintains the VPS account.
+If you deploy a new worker and the jenkins master can't connect to it, copy the public key from
+a working worker's `/home/jenkins/.ssh/authorized_keys`.
 
 ### How to prepare machines
+In case of RHEL, enable the `rhel-7-server-extras-rpms` and `rhel-7-server-optional-rpms` repos using e.g. the `subscription-manager`.
 You might want to use Ansible Playbooks, saved in ```./ansible``` directory.
 Please see ```README.md``` for details.
 
@@ -57,6 +60,10 @@ Please see ```README.md``` for details.
 		+ Set status on GitHub
 	+ *Role-based Authorization Strategy*
 		+ Allow manage user rights as roles
+
+### Users
+ + Copy contents of the `/var/lib/jenkins/users` to the same location on the new system to migrate users (don't forget to restart Jenkins after doing so).
+ + Similarly, copy the `hudson/authorizationStrategy/roleMap[@type=globalRoles]/role[@name="admin"]/assignedSIDs` list of usernames with admin privileges in `/var/lib/jenkins/config.xml`.
 
 #### GitHub Integration
 For details how to setup integration with GitHub, please check `./ansible/README.md`
@@ -99,3 +106,6 @@ System updates are handled via cronie and yum-cron packages. This is deployed vi
         + reboot & try $ ping xmlrpc.rhn.redhat.com
 + 502 error from nginx - bad gateway
     - setsebool httpd_can_network_connect on -P
++ Problem with downloading plugins due to SSL errors:
+    - You may hit this issue: https://issues.jenkins-ci.org/browse/JENKINS-53288
+    - In a nutshell, edit the `/etc/crypto-policies/back-ends/java.config` file and relax the `RSA keySize` limitation to `RSA keySize < 1024`.
