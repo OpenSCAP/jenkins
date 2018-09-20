@@ -44,6 +44,8 @@
       - scap-workbench-maint
       - scap-workbench-pull-requests
       - static_openscap_docs
+    domains:
+      - jenkins.complianceascode.io
 
   tasks:
 
@@ -155,7 +157,7 @@
     when: nginx_tls_key.stat.exists == False  # only if letsencrypt's cert is missing
 
   - name: Config nginx (reverse proxy) with jenkins.conf
-    copy:
+    template:
       src: ./master_cfg/nginx_jenkins.conf
       dest: /etc/nginx/conf.d/jenkins.conf
     notify: restart nginx
@@ -278,7 +280,7 @@
       update: yes
 
   - name: Copy the letsencrypt script over
-    copy:
+    template:
       src: ./master_cfg/letsencrypt.sh
       dest: /root/
       mode: 0700
