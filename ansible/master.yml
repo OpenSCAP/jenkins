@@ -31,16 +31,22 @@
       - openscap-daemon
       - openscap-maint
       - openscap-master-disabled-probes
+      - openscap-master-pull-requests
       - openscap-master
       - openscap-parametrized
       - openscap-pull-requests
       - oscap-anaconda-addon-master
+      - oscap-anaconda-addon-pull-requests
       - oscap-anaconda-addon-rhel7
+      - scap-security-guide-linkcheck
+      - scap-security-guide-nightly-multi-test
       - scap-security-guide-nightly-oval510-zip
       - scap-security-guide-nightly-zip
       - scap-security-guide-nist-testsuite
       - scap-security-guide-parameters
+      - scap-security-guide-pull-requests-multi
       - scap-security-guide-pull-requests
+      - scap-security-guide-py2-py3-sanity
       - scap-workbench-maint
       - scap-workbench-pull-requests
       - static_openscap_docs

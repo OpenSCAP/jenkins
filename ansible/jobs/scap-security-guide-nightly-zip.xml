@@ -12,8 +12,8 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.1">
-      <projectUrl>http://github.com/OpenSCAP/scap-security-guide/</projectUrl>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.2">
+      <projectUrl>https://github.com/ComplianceAsCode/content/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
     <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
@@ -25,6 +25,7 @@
           <name></name>
           <description></description>
           <allowedSlaves>
+            <string>fedora</string>
             <string>rhel6</string>
             <string>rhel7</string>
           </allowedSlaves>
@@ -64,7 +65,7 @@
   <triggers/>
   <concurrentBuild>true</concurrentBuild>
   <builders>
-    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.5.2">
+    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
       <toolArgs>-DSSG_JINJA2_CACHE_DIR=&quot;$WORKSPACE/../ssg_jinja2_cache&quot;</toolArgs>
@@ -85,7 +86,7 @@
         </hudson.plugins.cmake.BuildToolStep>
       </toolSteps>
     </hudson.plugins.cmake.CmakeBuilder>
-    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.5.2">
+    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.6.0">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
       <toolArgs>-j $CPU_COUNT

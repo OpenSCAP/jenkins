@@ -12,7 +12,7 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.0">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.1">
       <projectUrl>https://github.com/OpenSCAP/openscap/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
@@ -30,7 +30,7 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.0">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -53,7 +53,7 @@
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
-    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.40.0">
+    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.42.0">
       <spec>H/5 * * * *</spec>
       <configVersion>3</configVersion>
       <adminlist>shawndwells
@@ -99,7 +99,7 @@ bushong1
 zemb                                                                            
 jokajak                                                                         
 radzy                                                                           
-yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlcharton matejak JennyUWaterloo cipherboy abergmann</whitelist>
+yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlcharton matejak JennyUWaterloo cipherboy abergmann mildass</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
@@ -141,7 +141,7 @@ yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlc
   </triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>
-    <com.cloudbees.jenkins.GitHubSetCommitStatusBuilder plugin="github@1.29.0">
+    <com.cloudbees.jenkins.GitHubSetCommitStatusBuilder plugin="github@1.29.1">
       <statusMessage>
         <content></content>
       </statusMessage>

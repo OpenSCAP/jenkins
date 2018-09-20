@@ -131,6 +131,7 @@ cipherboy</adminlist>
   <builders>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
+set -x
 git clean -xf
 make po-pull
 make dist

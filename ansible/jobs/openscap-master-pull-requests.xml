@@ -12,7 +12,7 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.1">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.2">
       <projectUrl>https://github.com/OpenSCAP/openscap/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
@@ -116,7 +116,7 @@ bushong1
 zemb                                                                            
 jokajak                                                                         
 radzy                                                                           
-yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlcharton matejak JennyUWaterloo cipherboy abergmann</whitelist>
+yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlcharton matejak JennyUWaterloo cipherboy abergmann mildass</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
@@ -161,13 +161,13 @@ yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlc
   </triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>
-    <com.cloudbees.jenkins.GitHubSetCommitStatusBuilder plugin="github@1.29.1">
+    <com.cloudbees.jenkins.GitHubSetCommitStatusBuilder plugin="github@1.29.2">
       <statusMessage>
         <content></content>
       </statusMessage>
       <contextSource class="org.jenkinsci.plugins.github.status.sources.DefaultCommitContextSource"/>
     </com.cloudbees.jenkins.GitHubSetCommitStatusBuilder>
-    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.5.2">
+    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
       <installationName>InSearchPath</installationName>
       <workingDir>build/</workingDir>
       <sourceDir>.</sourceDir>
@@ -180,7 +180,7 @@ yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlc
         </hudson.plugins.cmake.BuildToolStep>
       </toolSteps>
     </hudson.plugins.cmake.CmakeBuilder>
-    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.5.2">
+    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.6.0">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
       <toolArgs>-j $CPU_COUNT
