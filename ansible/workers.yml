@@ -171,6 +171,13 @@
       state: installed
     when: ansible_distribution == 'Fedora'
 
+  - name: Ensure that there is no Python2 on the system (Fedora only)
+    package:
+      name:
+      - python2
+      state: absent
+    when: ansible_distribution == 'Fedora'
+
   - name: Ensure SCAP Security Guide dependencies are installed (RHEL7 only)
     package:
       name:
