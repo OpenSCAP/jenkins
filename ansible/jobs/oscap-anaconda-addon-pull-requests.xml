@@ -12,7 +12,7 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.1">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.2">
       <projectUrl>https://github.com/OpenSCAP/oscap-anaconda-addon/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
@@ -48,7 +48,8 @@
     <submoduleCfg class="list"/>
     <extensions/>
   </scm>
-  <canRoam>true</canRoam>
+  <assignedNode>master</assignedNode>
+  <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
@@ -70,7 +71,7 @@ cipherboy</adminlist>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
       <useGitHubHooks>true</useGitHubHooks>
       <permitAll>false</permitAll>
-      <whitelist> matejak dardok</whitelist>
+      <whitelist> matejak dardok ggbecker</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
@@ -103,7 +104,7 @@ cipherboy</adminlist>
         </org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
       </extensions>
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
-    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.29.1">
+    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.29.2">
       <spec></spec>
     </com.cloudbees.jenkins.GitHubPushTrigger>
   </triggers>
@@ -127,18 +128,12 @@ cipherboy</adminlist>
       </axisValues>
     </ca.silvermaplesolutions.jenkins.plugins.daxis.DynamicAxis>
   </axes>
-  <combinationFilter>!(t_branch==&quot;rhel7-branch&quot; &amp;&amp; distributions==&quot;fedora&quot;) &amp;&amp; !(t_branch==&quot;master&quot; &amp;&amp; distributions==&quot;rhel7&quot;)</combinationFilter>
+  <combinationFilter>!(t_branch==&quot;rhel7-branch&quot; &amp;&amp; distributions==&quot;fedora&quot;) &amp;&amp; !(t_branch==&quot;master&quot; &amp;&amp; distributions==&quot;rhel7&quot;) &amp;&amp; !(t_branch==&quot;rhel8-branch&quot; &amp;&amp; distributions==&quot;rhel7&quot;)</combinationFilter>
   <builders>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-set -x
 git clean -xf
-make po-pull
-make dist
-mkdir -p ~/rpmbuild/SOURCES
-rm ~/rpmbuild/SOURCES/oscap-anaconda-addon-*.tar.gz
-mv oscap-anaconda-addon-*.tar.gz ~/rpmbuild/SOURCES
-rpmbuild -ba oscap-anaconda-addon.spec</command>
+make unittest</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
