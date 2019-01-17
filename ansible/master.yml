@@ -31,43 +31,40 @@
       - openscap-daemon
       - openscap-maint
       - openscap-master-disabled-probes
+      - openscap-master-pull-requests
       - openscap-master
       - openscap-parametrized
       - openscap-pull-requests
       - oscap-anaconda-addon-master
+      - oscap-anaconda-addon-pull-requests
       - oscap-anaconda-addon-rhel7
+      - scap-security-guide-linkcheck
+      - scap-security-guide-nightly-multi-test
       - scap-security-guide-nightly-oval510-zip
       - scap-security-guide-nightly-zip
       - scap-security-guide-nist-testsuite
       - scap-security-guide-parameters
+      - scap-security-guide-pull-requests-multi
       - scap-security-guide-pull-requests
+      - scap-security-guide-py2-py3-sanity
       - scap-workbench-maint
       - scap-workbench-pull-requests
       - static_openscap_docs
+    domains:
+      - jenkins.complianceascode.io
 
   tasks:
-  - name: Ensure the Jenkins data volume is partitioned
-    parted:
-      device: /dev/xvdb
-      number: 1
-      state: present
-
-  - name: Ensure ext4 is used for the Jenkins data partition
-    filesystem:
-      fstype: ext4
-      dev: /dev/xvdb1
 
   - name: Create mount point for Jenkins data directory
     file:
       path: /var/lib/jenkins
       state: directory
 
-  - name: Mount the Jenkins data directory
-    mount:
-      path: /var/lib/jenkins
-      src: /dev/xvdb1
-      fstype: ext4
-      state: mounted
+  - name: Install prerequisites for authorized keys addition
+    package:
+      name:
+      - libselinux-python
+      - python2-libsemanage
 
   - name: Ensure Jenkins repo is enabled
     get_url:
@@ -166,7 +163,7 @@
     when: nginx_tls_key.stat.exists == False  # only if letsencrypt's cert is missing
 
   - name: Config nginx (reverse proxy) with jenkins.conf
-    copy:
+    template:
       src: ./master_cfg/nginx_jenkins.conf
       dest: /etc/nginx/conf.d/jenkins.conf
     notify: restart nginx
@@ -289,7 +286,7 @@
       update: yes
 
   - name: Copy the letsencrypt script over
-    copy:
+    template:
       src: ./master_cfg/letsencrypt.sh
       dest: /root/
       mode: 0700

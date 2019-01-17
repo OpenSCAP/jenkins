@@ -12,8 +12,8 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.1">
-      <projectUrl>https://github.com/OpenSCAP/scap-security-guide/</projectUrl>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.2">
+      <projectUrl>https://github.com/ComplianceAsCode/content/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
     <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
@@ -142,7 +142,7 @@ yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell Gary
   <concurrentBuild>true</concurrentBuild>
   <axes/>
   <builders>
-    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.5.2">
+    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
       <toolArgs>-DSSG_OVAL_SCHEMATRON_VALIDATION_ENABLED=OFF -DSSG_JINJA2_CACHE_DIR=&quot;$WORKSPACE/../ssg_jinja2_cache&quot;</toolArgs>
@@ -157,7 +157,7 @@ yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell Gary
         </hudson.plugins.cmake.BuildToolStep>
       </toolSteps>
     </hudson.plugins.cmake.CmakeBuilder>
-    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.5.2">
+    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.6.0">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
       <toolArgs>-j $CPU_COUNT

@@ -13,6 +13,11 @@
       name: jenkins
       comment: "Jenkins user"
 
+  - name: Install prerequisites for authorized keys addition
+    package:
+      name:
+      - libselinux-python
+
   # we use the public key to connect to slaves from jenkins master
   - name: Authorize master's jenkins user public key
     authorized_key:
@@ -25,6 +30,24 @@
     package:
       name:
         - java
+
+  - name: Add the EPEL 7 repository
+    yum_repository:
+      name: epel
+      description: Extra Packages for Enterprise Linux 7 - $basearch
+      gpgcheck: yes
+      gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7Server
+      mirrorlist: https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7"
+
+  - name: Add the EPEL 6 repository
+    yum_repository:
+      name: epel
+      description: Extra Packages for Enterprise Linux 6 - $basearch
+      gpgcheck: yes
+      gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6Server
+      mirrorlist: https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "6"
 
   - name: Ensure general build dependencies are installed
     package:
@@ -39,7 +62,17 @@
       - gcc
       - make
       - ccache
+
+  - name: Ensure OpenSCAP has asciidoctor installed
+    gem:
+      name: asciidoctor
+      user_install: no # let's install it everywhere
+
+  - name: Ensure ninja-build is installed if applicable (RHEL7 or Fedora only)
+    package:
+      name:
       - ninja-build # for faster PR build
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] >= "7"
 
   - name: Copy ccache.conf over
     copy:
@@ -106,14 +139,10 @@
       - openscap-devel
       - qt-devel
       - polkit
+      - asciidoc
       state: installed
 
-  - name: Ensure SCAP Workbench has asciidoctor installed
-    gem:
-      name: asciidoctor
-      user_install: no # let's install it everywhere
-
-  - name: Ensure Qt5 is installed (SCAP Workbench dependency)
+  - name: Ensure Qt5 is installed (Fedora and RHEL7 only, SCAP Workbench dependency)
     package:
       name:
       - qt5-qtbase-devel
@@ -142,12 +171,28 @@
       state: installed
     when: ansible_distribution == 'Fedora'
 
-  - name: Ensure SCAP Security Guide dependencies are installed (RHEL only)
+  - name: Ensure that there is no Python2 on the system (Fedora only)
+    package:
+      name:
+      - python2
+      state: absent
+    when: ansible_distribution == 'Fedora' and False  # We don't really want to remove it as long as linkchecker is python2-only.
+
+  - name: Ensure SCAP Security Guide dependencies are installed (RHEL7 only)
     package:
       name:
       - python-jinja2  # needed for the new SSG yaml/jinja2 port
+      - python2-pip  # needed for the linkchecker/pytest
       state: installed
-    when: ansible_distribution == 'RedHat'
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] >= "7"
+
+  - name: Ensure SCAP Security Guide dependencies are installed (RHEL6 only)
+    package:
+      name:
+      - python-jinja2  # needed for the new SSG yaml/jinja2 port
+      - python-pip  # needed for the linkchecker/pytest
+      state: installed
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "6"
 
   # this is the only common way across rhel/fedora.
   # It's url-based, because original project is dead, and fork is not established yet
@@ -157,13 +202,13 @@
       - git+https://github.com/linkcheck/linkchecker.git
 
   # RHEL may not have pytest
-  - name: Ensure pytest coverage support is installed
+  - name: Ensure pytest coverage support is installed (RHEL only)
     pip:
       name:
       - pytest
     when: ansible_distribution == 'RedHat'
 
-  - name: Ensure OpenSCAP Daemon dependencies are installed
+  - name: Ensure OpenSCAP Daemon dependencies are installed (RHEL7 only)
     package:
       name:
       - dbus-python

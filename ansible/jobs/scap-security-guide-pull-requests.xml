@@ -12,8 +12,8 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.1">
-      <projectUrl>https://github.com/OpenSCAP/scap-security-guide/</projectUrl>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.2">
+      <projectUrl>https://github.com/ComplianceAsCode/content/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
     <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
@@ -118,7 +118,7 @@ fslavin
 csreynolds                                                                      
 openprivacy                                                                     
 jahnje carbonin jeffcpullen electrosenpai pthierry38 GautamSatish jcpunk jglemza roysjosh MollyJoBault thetuxracer radzy chuckatkins ktbzimm
-yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell GaryGapinski hooksie1 chrisruffalo kharyam matejak lfisher47 rybal06 rchayes cakernstock ptitoliv nathanpeters008 matusmarhefka tedbrunell rlucente-se-jboss nzwulfin OnceUponALoop iokomin mildass dericcrago jamescassell xiruiyang sshimko kenyon abergmann cipherboy ajd394</whitelist>
+yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell GaryGapinski hooksie1 chrisruffalo kharyam matejak lfisher47 rybal06 rchayes cakernstock ptitoliv nathanpeters008 matusmarhefka tedbrunell rlucente-se-jboss nzwulfin OnceUponALoop iokomin mildass dericcrago jamescassell xiruiyang sshimko kenyon abergmann cipherboy ajd394 dhanushkar-wso2 xhudik Mixer9</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
@@ -154,7 +154,7 @@ yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell Gary
   </triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>
-    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.5.2">
+    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
       <toolArgs>-DSSG_OVAL_SCHEMATRON_VALIDATION_ENABLED=OFF -DSSG_JINJA2_CACHE_DIR=&quot;$WORKSPACE/../ssg_jinja2_cache&quot;</toolArgs>
@@ -170,7 +170,7 @@ yuumasato Joeri-MS lamawithonel rprice konstruktoid hex2a dokuhebi tbrunell Gary
         </hudson.plugins.cmake.BuildToolStep>
       </toolSteps>
     </hudson.plugins.cmake.CmakeBuilder>
-    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.5.2">
+    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.6.0">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
       <toolArgs>-j $CPU_COUNT

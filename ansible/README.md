@@ -77,7 +77,8 @@ Jenkins -> Credentials -> System -> Global (unrestricted). Click
 to "System (Jenkins and nodes only)".
 
 After doing this you will be able to add new nodes using this credential.
-Use the internal AWS IP because transfers over it are free.
+If the master and workers run on AWS, use the internal AWS IP
+(s.a. `ip-1-2-3-4.us-east-5.compute.internal`), because transfers over it are free.
 
 For each node set Environment variable "CPU_COUNT" to the appropriate number.
 If you fail to do this some of the jobs will build as parallel as possible

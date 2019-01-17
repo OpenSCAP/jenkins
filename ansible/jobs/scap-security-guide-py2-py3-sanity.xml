@@ -1,7 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Performs linkcheck across all build tables and html guides to ensure there are no broken references.</description>
+  <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <jenkins.model.BuildDiscarderProperty>
@@ -12,13 +12,32 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.2">
-      <projectUrl>https://github.com/ComplianceAsCode/content/</projectUrl>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.1">
+      <projectUrl>http://github.com/OpenSCAP/scap-security-guide/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
     <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
       <leastLoadDisabled>false</leastLoadDisabled>
     </org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition plugin="nodelabelparameter@1.7.2">
+          <name></name>
+          <description></description>
+          <allowedSlaves>
+            <string>fedora</string>
+          </allowedSlaves>
+          <defaultSlaves>
+            <string>fedora</string>
+          </defaultSlaves>
+          <triggerIfResult>allowMultiSelectionForConcurrentBuilds</triggerIfResult>
+          <allowMultiNodeSelection>true</allowMultiNodeSelection>
+          <triggerConcurrentBuilds>true</triggerConcurrentBuilds>
+          <ignoreOfflineNodes>false</ignoreOfflineNodes>
+          <nodeEligibility class="org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility"/>
+        </org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
   </properties>
   <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
     <configVersion>2</configVersion>
@@ -46,37 +65,19 @@
       <spec>@midnight</spec>
     </hudson.triggers.TimerTrigger>
   </triggers>
-  <concurrentBuild>false</concurrentBuild>
+  <concurrentBuild>true</concurrentBuild>
   <builders>
-    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
-      <installationName>InSearchPath</installationName>
-      <workingDir>build</workingDir>
-      <toolArgs>-DSSG_OVAL_SCHEMATRON_VALIDATION_ENABLED=OFF -DSSG_JINJA2_CACHE_DIR=&quot;$WORKSPACE/../ssg_jinja2_cache&quot;</toolArgs>
-      <generator>Unix Makefiles</generator>
-      <sourceDir>.</sourceDir>
-      <buildType>Release</buildType>
-      <cleanBuild>true</cleanBuild>
-      <toolSteps>
-        <hudson.plugins.cmake.BuildToolStep>
-          <args>-j $CPU_COUNT</args>
-          <withCmake>false</withCmake>
-        </hudson.plugins.cmake.BuildToolStep>
-      </toolSteps>
-    </hudson.plugins.cmake.CmakeBuilder>
-    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.6.0">
-      <installationName>InSearchPath</installationName>
-      <workingDir>build</workingDir>
-      <toolArgs>-j $CPU_COUNT
--R linkchecker
---output-on-failure</toolArgs>
-      <toolId>ctest</toolId>
-    </hudson.plugins.cmake.CToolBuilder>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-# Clean up the build directory
-rm -rf &quot;$WORKSPACE/build&quot;</command>
+./tests/python2_vs_python3_sanity.sh</command>
     </hudson.tasks.Shell>
   </builders>
-  <publishers/>
+  <publishers>
+    <hudson.tasks.Mailer plugin="mailer@1.21">
+      <recipients>openscap-maint@redhat.com</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
   <buildWrappers/>
 </project>
