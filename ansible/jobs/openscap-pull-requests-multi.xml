@@ -13,7 +13,7 @@
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.2">
-      <projectUrl>https://github.com/ComplianceAsCode/content/</projectUrl>
+      <projectUrl>https://github.com/OpenSCAP/openscap/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
     <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
@@ -36,7 +36,7 @@
       <hudson.plugins.git.UserRemoteConfig>
         <name>origin</name>
         <refspec>+refs/pull/*:refs/remotes/origin/pr/*</refspec>
-        <url>git://github.com/OpenSCAP/scap-security-guide.git</url>
+        <url>git://github.com/OpenSCAP/openscap.git</url>
         <credentialsId>openscap-ci</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
@@ -65,7 +65,8 @@ dahaic
 yuumasato
 redhatrises
 cipherboy
-matejak</adminlist>
+matejak
+matusmarhefka</adminlist>
       <allowMembersOfWhitelistedOrgsAsAdmin>false</allowMembersOfWhitelistedOrgsAsAdmin>
       <orgslist></orgslist>
       <cron>H/5 * * * *</cron>
@@ -73,15 +74,50 @@ matejak</adminlist>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
       <useGitHubHooks>true</useGitHubHooks>
       <permitAll>false</permitAll>
-      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker</whitelist>
+      <whitelist>isimluk                                                        
+dkopecek                                                                        
+mpreisler                                                                       
+pvrabec                                                                         
+theinric                                                                        
+jan-cerny                                                                       
+bachradsusi                                                                     
+ybznek                                                                          
+msrubar                                                                         
+mtrmac                                                                          
+fslavin                                                                         
+jacobvar                                                                        
+iankko                                                                          
+rwmjones                                                                        
+Jakuje                                                                          
+chifflier                                                                       
+iljakuklic                                                                      
+redhatrises                                                                     
+shawndwells                                                                     
+gregelin                                                                        
+baude                                                                           
+rladkins                                                                        
+mgrepl                                                                          
+msmeissn                                                                        
+openprivacy                                                                     
+bushong1                                                                        
+zemb                                                                            
+jokajak                                                                         
+radzy                                                                           
+yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlcharton matejak JennyUWaterloo cipherboy abergmann mildass teselkin ggbecker</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
         <org.jenkinsci.plugins.ghprb.GhprbBranch>
-          <branch></branch>
+          <branch>maint-1.2</branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
       </whiteListTargetBranches>
       <blackListTargetBranches>
+        <org.jenkinsci.plugins.ghprb.GhprbBranch>
+          <branch>master</branch>
+        </org.jenkinsci.plugins.ghprb.GhprbBranch>
+        <org.jenkinsci.plugins.ghprb.GhprbBranch>
+          <branch>maint-1.3</branch>
+        </org.jenkinsci.plugins.ghprb.GhprbBranch>
         <org.jenkinsci.plugins.ghprb.GhprbBranch>
           <branch></branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
@@ -94,9 +130,6 @@ matejak</adminlist>
       <includedRegions></includedRegions>
       <excludedRegions></excludedRegions>
       <extensions>
-        <org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
-          <overrideGlobal>false</overrideGlobal>
-        </org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
         <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
           <commitStatusContext></commitStatusContext>
           <triggeredStatus></triggeredStatus>
@@ -104,10 +137,13 @@ matejak</adminlist>
           <statusUrl></statusUrl>
           <addTestResults>false</addTestResults>
         </org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
+        <org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
+          <overrideGlobal>false</overrideGlobal>
+        </org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
       </extensions>
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
   </triggers>
-  <concurrentBuild>false</concurrentBuild>
+  <concurrentBuild>true</concurrentBuild>
   <axes>
     <hudson.matrix.LabelAxis>
       <name>label</name>
@@ -119,33 +155,22 @@ matejak</adminlist>
     </hudson.matrix.LabelAxis>
   </axes>
   <builders>
-    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
-      <installationName>InSearchPath</installationName>
-      <workingDir>build</workingDir>
-      <generator>${BUILD_BACKEND}</generator>
-      <sourceDir>.</sourceDir>
-      <buildType>Release</buildType>
-      <cleanBuild>true</cleanBuild>
-      <toolSteps>
-        <hudson.plugins.cmake.BuildToolStep>
-          <args>all -j$CPU_COUNT</args>
-          <vars>DESTDIR=${WORKSPACE}/build/install_test</vars>
-          <withCmake>false</withCmake>
-        </hudson.plugins.cmake.BuildToolStep>
-      </toolSteps>
-    </hudson.plugins.cmake.CmakeBuilder>
-    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.6.0">
-      <installationName>InSearchPath</installationName>
-      <workingDir>build</workingDir>
-      <toolArgs>-j $CPU_COUNT
---output-on-failure
--E linkchecker</toolArgs>
-      <toolId>ctest</toolId>
-    </hudson.plugins.cmake.CToolBuilder>
+    <com.cloudbees.jenkins.GitHubSetCommitStatusBuilder plugin="github@1.29.2">
+      <statusMessage>
+        <content></content>
+      </statusMessage>
+      <contextSource class="org.jenkinsci.plugins.github.status.sources.DefaultCommitContextSource"/>
+    </com.cloudbees.jenkins.GitHubSetCommitStatusBuilder>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-# Clean up the build directory
-rm -rf &quot;$WORKSPACE/build&quot;</command>
+ulimit -c unlimited
+git clean -xfd
+
+export VERBOSE=yes  # The test suite output should be more helpful
+./autogen.sh
+source &lt;( rpm --eval &apos;%configure --enable-sce&apos; )
+make -j $CPU_COUNT 
+make distcheck -j $CPU_COUNT -k AM_COLOR_TESTS=always</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
@@ -154,7 +179,7 @@ rm -rf &quot;$WORKSPACE/build&quot;</command>
       <colorMapName>css</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
     <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter plugin="build-name-setter@1.6.9">
-      <template>${GIT_BRANCH} - #${BUILD_NUMBER} - ${BUILD_STATUS}</template>
+      <template>${GIT_BRANCH} - #${BUILD_NUMBER}</template>
       <runAtStart>true</runAtStart>
       <runAtEnd>true</runAtEnd>
     </org.jenkinsci.plugins.buildnamesetter.BuildNameSetter>

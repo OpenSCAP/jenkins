@@ -19,27 +19,6 @@
     <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
       <leastLoadDisabled>false</leastLoadDisabled>
     </org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition plugin="nodelabelparameter@1.7.2">
-          <name></name>
-          <description></description>
-          <allowedSlaves>
-            <string>fedora</string>
-            <string>rhel6</string>
-            <string>rhel7</string>
-          </allowedSlaves>
-          <defaultSlaves>
-            <string>fedora</string>
-          </defaultSlaves>
-          <triggerIfResult>allowMultiSelectionForConcurrentBuilds</triggerIfResult>
-          <allowMultiNodeSelection>true</allowMultiNodeSelection>
-          <triggerConcurrentBuilds>true</triggerConcurrentBuilds>
-          <ignoreOfflineNodes>false</ignoreOfflineNodes>
-          <nodeEligibility class="org.jvnet.jenkins.plugins.nodelabelparameter.node.AllNodeEligibility"/>
-        </org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
   </properties>
   <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
     <configVersion>2</configVersion>
@@ -62,7 +41,11 @@
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers/>
+  <triggers>
+    <hudson.triggers.TimerTrigger>
+      <spec>@midnight</spec>
+    </hudson.triggers.TimerTrigger>
+  </triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>
     <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
@@ -110,11 +93,6 @@ rm -rf &quot;$WORKSPACE/build&quot;</command>
       <defaultExcludes>true</defaultExcludes>
       <caseSensitive>true</caseSensitive>
     </hudson.tasks.ArtifactArchiver>
-    <hudson.tasks.Mailer plugin="mailer@1.21">
-      <recipients>openscap-maint@redhat.com</recipients>
-      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
-      <sendToIndividuals>false</sendToIndividuals>
-    </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
 </project>

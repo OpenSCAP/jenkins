@@ -25,17 +25,14 @@
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>*/master</name>
+        <name>*/maint-1.2</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
     <submoduleCfg class="list"/>
-    <extensions>
-      <hudson.plugins.git.extensions.impl.CleanCheckout/>
-    </extensions>
+    <extensions/>
   </scm>
-  <assignedNode>fedora</assignedNode>
-  <canRoam>false</canRoam>
+  <canRoam>true</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
@@ -44,34 +41,16 @@
       <spec></spec>
     </com.cloudbees.jenkins.GitHubPushTrigger>
   </triggers>
-  <concurrentBuild>false</concurrentBuild>
+  <concurrentBuild>true</concurrentBuild>
   <builders>
-    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
-      <installationName>InSearchPath</installationName>
-      <workingDir>build/</workingDir>
-      <generator>Ninja</generator>
-      <sourceDir>.</sourceDir>
-      <buildType>Debug</buildType>
-      <cleanBuild>true</cleanBuild>
-      <toolSteps>
-        <hudson.plugins.cmake.BuildToolStep>
-          <args>all</args>
-          <vars>-j $CPU_COUNT</vars>
-          <withCmake>false</withCmake>
-        </hudson.plugins.cmake.BuildToolStep>
-      </toolSteps>
-    </hudson.plugins.cmake.CmakeBuilder>
-    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.6.0">
-      <installationName>InSearchPath</installationName>
-      <workingDir>build</workingDir>
-      <toolArgs>-j $CPU_COUNT
---output-on-failure</toolArgs>
-      <toolId>ctest</toolId>
-    </hudson.plugins.cmake.CToolBuilder>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-# Clean up the build directory
-rm -rf &quot;$WORKSPACE/build&quot;</command>
+ulimit -c unlimited
+git clean -xf
+./autogen.sh
+source &lt;( rpm --eval &apos;%configure --enable-sce&apos; )
+make -j $CPU_COUNT
+make -j $CPU_COUNT distcheck -k AM_COLOR_TESTS=always</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
