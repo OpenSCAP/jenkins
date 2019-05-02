@@ -12,7 +12,7 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.2">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
       <projectUrl>https://github.com/ComplianceAsCode/content/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
@@ -30,7 +30,7 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@4.0.0-rc">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -73,7 +73,7 @@ matejak</adminlist>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
       <useGitHubHooks>true</useGitHubHooks>
       <permitAll>false</permitAll>
-      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker</whitelist>
+      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker lkinser jgwl maltek</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
@@ -119,6 +119,11 @@ matejak</adminlist>
     </hudson.matrix.LabelAxis>
   </axes>
   <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+# Clean up the build directory to start clean from the start
+rm -rf &quot;$WORKSPACE/build&quot;</command>
+    </hudson.tasks.Shell>
     <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
@@ -144,16 +149,16 @@ matejak</adminlist>
     </hudson.plugins.cmake.CToolBuilder>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-# Clean up the build directory
+# Clean up the build directory to save space
 rm -rf &quot;$WORKSPACE/build&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
   <buildWrappers>
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.2">
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.6.2">
       <colorMapName>css</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-    <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter plugin="build-name-setter@1.6.9">
+    <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter plugin="build-name-setter@1.7.0">
       <template>${GIT_BRANCH} - #${BUILD_NUMBER} - ${BUILD_STATUS}</template>
       <runAtStart>true</runAtStart>
       <runAtEnd>true</runAtEnd>
