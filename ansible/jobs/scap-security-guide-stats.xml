@@ -1,0 +1,132 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Generate profile statistics and create HTML report.</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>30</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
+      <projectUrl>https://github.com/ComplianceAsCode/content/</projectUrl>
+      <displayName></displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
+      <leastLoadDisabled>false</leastLoadDisabled>
+    </org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@4.0.0-rc">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>git://github.com/ggbecker/content.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/html-profile-stats</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>fedora</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.TimerTrigger>
+      <spec>@midnight</spec>
+    </hudson.triggers.TimerTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
+      <installationName>InSearchPath</installationName>
+      <workingDir>build</workingDir>
+      <generator>Unix Makefiles</generator>
+      <sourceDir>.</sourceDir>
+      <buildType>Release</buildType>
+      <cleanBuild>false</cleanBuild>
+      <toolSteps>
+        <hudson.plugins.cmake.BuildToolStep>
+          <args>html-stats -j $CPU_COUNT</args>
+          <withCmake>false</withCmake>
+        </hudson.plugins.cmake.BuildToolStep>
+      </toolSteps>
+    </hudson.plugins.cmake.CmakeBuilder>
+    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
+      <installationName>InSearchPath</installationName>
+      <workingDir>build</workingDir>
+      <generator>Unix Makefiles</generator>
+      <sourceDir>.</sourceDir>
+      <buildType>Release</buildType>
+      <cleanBuild>false</cleanBuild>
+      <toolSteps>
+        <hudson.plugins.cmake.BuildToolStep>
+          <args>html-profile-stats -j $CPU_COUNT</args>
+          <withCmake>false</withCmake>
+        </hudson.plugins.cmake.BuildToolStep>
+      </toolSteps>
+    </hudson.plugins.cmake.CmakeBuilder>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+pushd $WORKSPACE
+STATS_DIR=statistics
+rm -rf $STATS_DIR
+mkdir $STATS_DIR
+touch $STATS_DIR/index.html
+echo &quot;&lt;html&gt;&quot; &gt; $STATS_DIR/index.html
+echo &quot;&lt;body&gt;&quot; &gt;&gt; $STATS_DIR/index.html
+echo &quot;&lt;ul&gt;&quot; &gt;&gt; $STATS_DIR/index.html
+# get supported products
+products=$(echo -e &quot;import ssg.constants\nprint(ssg.constants.product_directories)&quot; | python | sed -s &quot;s/&apos;//g; s/,//g; s/\[//g; s/\]//g&quot;)
+echo &quot;Supported products: $products&quot;
+for product in $products
+do
+    if [ -d build/$product ]; then
+    	if [ -f build/$product/stats.html ]; then
+          cp build/$product/stats.html $STATS_DIR/${product}-stats.html
+          echo &quot;&lt;li&gt;&lt;a href=\&quot;${product}-stats.html\&quot;&gt;Statistics for product: ${product}&lt;/a&gt;&lt;/li&gt;&quot; &gt;&gt; $STATS_DIR/index.html
+        fi
+    	if [ -f build/$product/profile-stats.html ]; then
+          cp build/$product/profile-stats.html $STATS_DIR/${product}-profile-stats.html
+          echo &quot;&lt;li&gt;&lt;a href=\&quot;${product}-profile-stats.html\&quot;&gt;Profile statistics for product: ${product}&lt;/a&gt;&lt;/li&gt;&quot; &gt;&gt; $STATS_DIR/index.html
+        fi
+    fi
+done
+echo &quot;&lt;/ul&gt;&quot; &gt;&gt; $STATS_DIR/index.html
+echo &quot;&lt;/body&gt;&quot; &gt;&gt; $STATS_DIR/index.html
+echo &quot;&lt;/html&gt;&quot; &gt;&gt; $STATS_DIR/index.html
+popd
+
+# Clean up the build directory
+rm -rf &quot;$WORKSPACE/build&quot;</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <htmlpublisher.HtmlPublisher plugin="htmlpublisher@1.18">
+      <reportTargets>
+        <htmlpublisher.HtmlPublisherTarget>
+          <reportName>Statistics</reportName>
+          <reportDir>statistics</reportDir>
+          <reportFiles>index.html</reportFiles>
+          <alwaysLinkToLastBuild>false</alwaysLinkToLastBuild>
+          <reportTitles></reportTitles>
+          <keepAll>false</keepAll>
+          <allowMissing>false</allowMissing>
+          <includes>**/*</includes>
+          <escapeUnderscores>true</escapeUnderscores>
+        </htmlpublisher.HtmlPublisherTarget>
+      </reportTargets>
+    </htmlpublisher.HtmlPublisher>
+  </publishers>
+  <buildWrappers/>
+</project>
