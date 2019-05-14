@@ -2,6 +2,7 @@
 - hosts:
   - worker_rhel6
   - worker_rhel7
+  - worker_rhel8
   - worker_fedora
 
   become: yes
@@ -17,6 +18,13 @@
     package:
       name:
       - libselinux-python
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] != "8"
+
+  - name: Install prerequisites for authorized keys addition (RHEL 8)
+    package:
+      name:
+      - python3-libselinux
+    when: ansible_distribution == 'RedHat' or ansible_distribution_version.split(".")[0] == "8"
 
   # we use the public key to connect to slaves from jenkins master
   - name: Authorize master's jenkins user public key
@@ -30,6 +38,15 @@
     package:
       name:
         - java
+
+  - name: Add the EPEL 8 repository
+    yum_repository:
+      name: epel
+      description: Extra Packages for Enterprise Linux 8 - $basearch
+      gpgcheck: yes
+      gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8Server
+      mirrorlist: https://mirrors.fedoraproject.org/metalink?repo=epel-8&arch=$basearch
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
 
   - name: Add the EPEL 7 repository
     yum_repository:

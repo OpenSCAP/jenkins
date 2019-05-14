@@ -16,7 +16,7 @@ Ansible module authorized_key, and run it from separate, not publicly available
 Ansible playbook.
 
 ### Extend the root partition
-Depending on the image you use to create the AWS instances you may need to
+Depending on the system image you use (especially likely on AWS), you may need to
 extend the root partition. This is a dangerous step which is why we don't even
 attempt it in the playbook. This is applicable to both the master and workers.
 
