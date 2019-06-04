@@ -12,7 +12,7 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.2">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
       <projectUrl>https://github.com/ComplianceAsCode/content/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
@@ -28,11 +28,13 @@
             <string>fedora</string>
             <string>rhel6</string>
             <string>rhel7</string>
+            <string>rhel8</string>
           </allowedSlaves>
           <defaultSlaves>
             <string>fedora</string>
             <string>rhel6</string>
             <string>rhel7</string>
+            <string>rhel8</string>
           </defaultSlaves>
           <triggerIfResult>allowMultiSelectionForConcurrentBuilds</triggerIfResult>
           <allowMultiNodeSelection>true</allowMultiNodeSelection>
@@ -43,7 +45,7 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@4.0.0-rc">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -70,7 +72,7 @@
     <hudson.triggers.TimerTrigger>
       <spec>H 3 * * 0</spec>
     </hudson.triggers.TimerTrigger>
-    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.29.2">
+    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.29.3">
       <spec></spec>
     </com.cloudbees.jenkins.GitHubPushTrigger>
   </triggers>

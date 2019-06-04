@@ -103,21 +103,18 @@ bushong1
 zemb                                                                            
 jokajak                                                                         
 radzy                                                                           
-yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlcharton matejak JennyUWaterloo cipherboy abergmann mildass teselkin ggbecker iokomin</whitelist>
+yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlcharton matejak JennyUWaterloo cipherboy abergmann mildass teselkin ggbecker iokomin evgenyz</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
-        <org.jenkinsci.plugins.ghprb.GhprbBranch>
-          <branch>maint-1.2</branch>
-        </org.jenkinsci.plugins.ghprb.GhprbBranch>
-      </whiteListTargetBranches>
-      <blackListTargetBranches>
         <org.jenkinsci.plugins.ghprb.GhprbBranch>
           <branch>master</branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
         <org.jenkinsci.plugins.ghprb.GhprbBranch>
           <branch>maint-1.3</branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
+      </whiteListTargetBranches>
+      <blackListTargetBranches>
         <org.jenkinsci.plugins.ghprb.GhprbBranch>
           <branch></branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
@@ -149,8 +146,8 @@ yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlc
       <name>label</name>
       <values>
         <string>fedora</string>
-        <string>rhel6</string>
         <string>rhel7</string>
+        <string>rhel8</string>
       </values>
     </hudson.matrix.LabelAxis>
   </axes>
@@ -161,16 +158,30 @@ yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlc
       </statusMessage>
       <contextSource class="org.jenkinsci.plugins.github.status.sources.DefaultCommitContextSource"/>
     </com.cloudbees.jenkins.GitHubSetCommitStatusBuilder>
+    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
+      <installationName>InSearchPath</installationName>
+      <workingDir>build</workingDir>
+      <generator>${BUILD_BACKEND}</generator>
+      <sourceDir>.</sourceDir>
+      <buildType>Debug</buildType>
+      <cleanBuild>true</cleanBuild>
+      <toolSteps>
+        <hudson.plugins.cmake.BuildToolStep>
+          <args>all</args>
+          <withCmake>false</withCmake>
+        </hudson.plugins.cmake.BuildToolStep>
+      </toolSteps>
+    </hudson.plugins.cmake.CmakeBuilder>
+    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.6.0">
+      <installationName>InSearchPath</installationName>
+      <workingDir>build</workingDir>
+      <toolArgs>--output-on-failure</toolArgs>
+      <toolId>ctest</toolId>
+    </hudson.plugins.cmake.CToolBuilder>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-ulimit -c unlimited
-git clean -xfd
-
-export VERBOSE=yes  # The test suite output should be more helpful
-./autogen.sh
-source &lt;( rpm --eval &apos;%configure --enable-sce&apos; )
-make -j $CPU_COUNT 
-make distcheck -j $CPU_COUNT -k AM_COLOR_TESTS=always</command>
+# Clean up the build directory
+rm -rf &quot;$WORKSPACE/build&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>

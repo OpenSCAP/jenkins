@@ -2,6 +2,7 @@
 - hosts:
   - worker_rhel6
   - worker_rhel7
+  - worker_rhel8
   - worker_fedora
 
   become: yes
@@ -13,10 +14,17 @@
       name: jenkins
       comment: "Jenkins user"
 
-  - name: Install prerequisites for authorized keys addition
+  - name: Install prerequisites for authorized keys addition (except RHEL8)
     package:
       name:
       - libselinux-python
+    when: (ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] != "8") or ansible_distribution == 'Fedora'
+
+  - name: Install prerequisites for authorized keys addition (RHEL8 only)
+    package:
+      name:
+      - python3-libselinux
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
 
   # we use the public key to connect to slaves from jenkins master
   - name: Authorize master's jenkins user public key
@@ -49,6 +57,16 @@
       mirrorlist: https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch
     when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "6"
 
+  - name: Add the Red Hat CodeReady Linux Builder for RHEL 8 x86_64
+    rhsm_repository:
+      name: codeready-builder-for-rhel-8-x86_64-rpms
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
+
+  - name: Add the Red Hat Ansible Engine 2 for RHEL 8 x86_64
+    rhsm_repository:
+      name: ansible-2-for-rhel-8-x86_64-rpms
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
+
   - name: Ensure general build dependencies are installed
     package:
       name:
@@ -61,14 +79,21 @@
       - gawk
       - gcc
       - make
+      state: installed
+
+  - name: Ensure ccache is installed (except RHEL 8)
+    package:
+      name:
       - ccache
+      state: installed
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] != "8"
 
   - name: Ensure OpenSCAP has asciidoctor installed
     gem:
       name: asciidoctor
       user_install: no # let's install it everywhere
 
-  - name: Ensure ninja-build is installed if applicable (RHEL7 or Fedora only)
+  - name: Ensure ninja-build is installed if applicable (except RHEL6)
     package:
       name:
       - ninja-build # for faster PR build
@@ -96,7 +121,6 @@
       - perl-XML-Parser
       - perl-XML-XPath
       - perl-devel
-      - python-devel
       - rpm-devel
       - swig
       - bzip2-devel
@@ -109,14 +133,28 @@
       - chkconfig
       state: installed
 
-  - name: Ensure procps is installed (OpenSCAP dependency)
+  - name: Ensure OpenSCAP dependencies are installed (Except RHEL8)
+    package:
+      name:
+      - python-devel
+      state: installed
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] != "8"
+
+  - name: Ensure OpenSCAP dependencies are installed (RHEL8 only)
+    package:
+      name:
+      - python3-devel
+      state: installed
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
+
+  - name: Ensure procps is installed (OpenSCAP dependency) (RHEL6 only)
     package:
       name:
       - procps
       state: installed
     when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] <= "6"
 
-  - name: Ensure procps-ng is installed (OpenSCAP dependency)
+  - name: Ensure procps-ng is installed (OpenSCAP dependency) (Except RHEL6)
     package:
       name:
       - procps-ng
@@ -137,12 +175,17 @@
       - openssh-clients
       - util-linux
       - openscap-devel
-      - qt-devel
       - polkit
       - asciidoc
       state: installed
 
-  - name: Ensure Qt5 is installed (Fedora and RHEL7 only, SCAP Workbench dependency)
+  - name: Ensure SCAP Workbench dependencies are installed (except RHEL8)
+    package:
+      name:
+      - qt-devel
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] != "8"
+
+  - name: Ensure Qt5 is installed (except RHEL6, SCAP Workbench dependency)
     package:
       name:
       - qt5-qtbase-devel
@@ -156,7 +199,6 @@
       - cmake
       - openscap-utils
       - wget  # needed for the NIST test suite for SSG
-      - PyYAML  # needed for the new SSG yaml port
       - ansible  # needed for ansible role syntax check
       state: installed
 
@@ -183,16 +225,28 @@
       name:
       - python-jinja2  # needed for the new SSG yaml/jinja2 port
       - python2-pip  # needed for the linkchecker/pytest
+      - PyYAML  # needed for the new SSG yaml port
       state: installed
-    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] >= "7"
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7"
 
   - name: Ensure SCAP Security Guide dependencies are installed (RHEL6 only)
     package:
       name:
       - python-jinja2  # needed for the new SSG yaml/jinja2 port
       - python-pip  # needed for the linkchecker/pytest
+      - PyYAML  # needed for the new SSG yaml port
       state: installed
     when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "6"
+
+  - name: Ensure SCAP Security Guide dependencies are installed (RHEL8 only)
+    package:
+      name:
+      - python3-pytest  # needed for unit tests + coverage
+      - python3-jinja2
+      - python3-PyYAML
+      - python3-pip
+      state: installed
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
 
   # this is the only common way across rhel/fedora.
   # It's url-based, because original project is dead, and fork is not established yet
@@ -221,7 +275,7 @@
       - gobject-introspection
       - pygobject2-devel
       state: installed
-    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] >= "7"
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] == "7"
 
   - name: Ensure OpenSCAP Daemon extra dependencies are installed (Fedora only)
     package:
@@ -235,6 +289,16 @@
       state: installed
     when: ansible_distribution == 'Fedora'
 
+  - name: Ensure OpenSCAP Daemon extra dependencies are installed (RHEL8 only)
+    package:
+      name:
+      - python3-dbus
+      - pygobject3-devel
+      - python3-gobject-base
+      - python3-gobject
+      state: installed
+    when: ansible_distribution == 'Fedora' or (ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8")
+
   - name: Ensure OSCAP Anaconda dependencies are installed (RHEL7 only)
     package:
       name:
@@ -245,9 +309,9 @@
       - python-cpio
       - zanata-python-client
       state: installed
-    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] >= "7"
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7"
 
-  - name: Ensure OpenSCAP Anaconda dependencies are installed (Fedora only)
+  - name: Ensure OpenSCAP Anaconda dependencies are installed (Fedora and RHEL8 only)
     package:
       name:
       - openscap-python3
@@ -258,6 +322,12 @@
       - python3-cpio
       - python3-pycurl
       - python3-kickstart
+      state: installed
+    when: ansible_distribution == 'Fedora' or (ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8")
+
+  - name: Ensure Zanata is installed (Fedora only)
+    package:
+      name:
       - zanata-python-client
       state: installed
     when: ansible_distribution == 'Fedora'
