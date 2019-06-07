@@ -92,13 +92,14 @@ echo &quot;Supported products: $products&quot;
 for product in $products
 do
     if [ -d build/$product ]; then
-    	if [ -f build/$product/stats.html ]; then
-          cp build/$product/stats.html $STATS_DIR/${product}-stats.html
-          echo &quot;&lt;li&gt;&lt;a href=\&quot;${product}-stats.html\&quot;&gt;Statistics for product: ${product}&lt;/a&gt;&lt;/li&gt;&quot; &gt;&gt; $STATS_DIR/index.html
+        mkdir -p $STATS_DIR/$product
+    	if [ -f build/$product/product-statistics/statistics.html ]; then
+          cp -rf build/$product/product-statistics $STATS_DIR/$product/product-statistics
+          echo &quot;&lt;li&gt;&lt;a href=\&quot;$product/product-statistics/statistics.html\&quot;&gt;Statistics for product: ${product}&lt;/a&gt;&lt;/li&gt;&quot; &gt;&gt; $STATS_DIR/index.html
         fi
-    	if [ -f build/$product/profile-stats.html ]; then
-          cp build/$product/profile-stats.html $STATS_DIR/${product}-profile-stats.html
-          echo &quot;&lt;li&gt;&lt;a href=\&quot;${product}-profile-stats.html\&quot;&gt;Profile statistics for product: ${product}&lt;/a&gt;&lt;/li&gt;&quot; &gt;&gt; $STATS_DIR/index.html
+    	if [ -f build/$product/profile-statistics/statistics.html ]; then
+          cp -rf build/$product/profile-statistics $STATS_DIR/$product/profile-statistics
+          echo &quot;&lt;li&gt;&lt;a href=\&quot;$product/profile-statistics/statistics.html\&quot;&gt;Profile statistics for product: ${product}&lt;/a&gt;&lt;/li&gt;&quot; &gt;&gt; $STATS_DIR/index.html
         fi
     fi
 done
