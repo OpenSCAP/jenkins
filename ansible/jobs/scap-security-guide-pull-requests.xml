@@ -73,7 +73,7 @@ matejak</adminlist>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
       <useGitHubHooks>true</useGitHubHooks>
       <permitAll>false</permitAll>
-      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker lkinser jgwl maltek</whitelist>
+      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker lkinser jgwl maltek comps keithkjackson</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
@@ -115,6 +115,7 @@ matejak</adminlist>
         <string>fedora</string>
         <string>rhel6</string>
         <string>rhel7</string>
+        <string>rhel8</string>
       </values>
     </hudson.matrix.LabelAxis>
   </axes>
