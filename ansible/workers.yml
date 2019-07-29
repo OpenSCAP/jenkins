@@ -210,6 +210,7 @@
       - python3-pytest  # needed for unit tests + coverage
       - python3-jinja2
       - python3-PyYAML
+      - bats
       state: installed
     when: ansible_distribution == 'Fedora'
 
