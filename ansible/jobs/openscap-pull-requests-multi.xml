@@ -6,8 +6,8 @@
   <properties>
     <jenkins.model.BuildDiscarderProperty>
       <strategy class="hudson.tasks.LogRotator">
-        <daysToKeep>-1</daysToKeep>
-        <numToKeep>-1</numToKeep>
+        <daysToKeep>7</daysToKeep>
+        <numToKeep>30</numToKeep>
         <artifactDaysToKeep>-1</artifactDaysToKeep>
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
@@ -103,7 +103,7 @@ bushong1
 zemb                                                                            
 jokajak                                                                         
 radzy                                                                           
-yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlcharton matejak JennyUWaterloo cipherboy abergmann mildass teselkin ggbecker iokomin evgenyz</whitelist>
+yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlcharton matejak JennyUWaterloo cipherboy abergmann mildass teselkin ggbecker iokomin evgenyz mildas ignatenkobrain vojtapolasek</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
