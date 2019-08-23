@@ -64,8 +64,7 @@
     <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.6.0">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
-      <toolArgs>-j $CPU_COUNT
---output-on-failure</toolArgs>
+      <toolArgs>--output-on-failure</toolArgs>
       <toolId>ctest</toolId>
     </hudson.plugins.cmake.CToolBuilder>
     <hudson.tasks.Shell>
