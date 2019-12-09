@@ -27,7 +27,12 @@
           <allowedSlaves>
             <string>ALL (no restriction)</string>
           </allowedSlaves>
-          <defaultSlaves/>
+          <defaultSlaves>
+            <string>fedora</string>
+            <string>rhel6</string>
+            <string>rhel7</string>
+            <string>rhel8</string>
+          </defaultSlaves>
           <triggerIfResult>multiSelectionDisallowed</triggerIfResult>
           <allowMultiNodeSelection>false</allowMultiNodeSelection>
           <triggerConcurrentBuilds>false</triggerConcurrentBuilds>

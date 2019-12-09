@@ -1,0 +1,97 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>7</daysToKeep>
+        <numToKeep>30</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
+      <leastLoadDisabled>false</leastLoadDisabled>
+    </org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>rhel7</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command># cleanup
+rm -rf output
+mkdir output</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>outdir=`pwd`/output
+mkdir -p $outdir
+
+# lets be wasteful
+rm -rf openscap openscap-1.2 openscap-1.3
+git clone https://github.com/OpenSCAP/openscap.git
+
+v=&quot;1.2&quot;
+
+pushd openscap
+git checkout maint-$v
+popd
+
+git clone -b maint-$v openscap openscap-$v
+
+pushd openscap-$v/docs
+doxygen Doxyfile
+cp -r html $outdir/openscap-$v
+asciidoctor --destination-dir manual -b html5 manual/manual.adoc
+cp manual/manual.html $outdir/openscap-$v/oscap_user_manual.html
+mkdir $outdir/openscap-$v/images
+cp manual/images/vertical-logo.png $outdir/openscap-$v/images
+popd
+
+
+v=&quot;1.3&quot;
+
+pushd openscap
+git checkout maint-$v
+popd
+
+git clone -b maint-$v openscap openscap-$v
+
+pushd openscap-$v/build
+cmake -DENABLE_DOCS=ON ..
+make docs
+
+pushd docs
+cp -r html $outdir/openscap-$v
+cp manual/manual.html $outdir/openscap-$v/oscap_user_manual.html
+mkdir $outdir/openscap-$v/images
+cp manual/images/vertical-logo.png $outdir/openscap-$v/images
+popd</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>pushd output/
+zip ../static.open-scap.org.zip -r ./
+popd
+
+echo &quot;Upload the ZIP archive to OpenShift app and run &apos;unzip static.open-scap.org.zip&apos; in the ssh shell&quot;</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>static.open-scap.org.zip</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>true</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>false</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+  </publishers>
+  <buildWrappers/>
+</project>

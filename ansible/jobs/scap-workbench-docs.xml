@@ -1,0 +1,106 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>7</daysToKeep>
+        <numToKeep>30</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty plugin="leastload@2.0.1">
+      <leastLoadDisabled>false</leastLoadDisabled>
+    </org.bstick12.jenkinsci.plugins.leastload.LeastLoadDisabledProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>rhel7</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command># cleanup
+rm -rf output
+mkdir output</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command># lets be wasteful
+rm -rf scap-workbench scap-workbench-0.8 scap-workbench-1.0 scap-workbench-1.1 scap-workbench-1.2
+git clone https://github.com/OpenSCAP/scap-workbench.git
+
+pushd scap-workbench
+git checkout v1-2
+git checkout v1-1
+git checkout 1.0.4
+git checkout 0.8.12
+popd
+
+git clone -b 0.8.12 scap-workbench scap-workbench-0.8
+git clone -b 1.0.4 scap-workbench scap-workbench-1.0
+git clone -b v1-1 scap-workbench scap-workbench-1.1
+git clone -b v1-2 scap-workbench scap-workbench-1.2
+
+pushd scap-workbench-0.8
+mkdir build
+cd build
+cmake ../
+make docs
+mkdir ../../output/scap-workbench-0.8
+cp doc/user_manual.html ../../output/scap-workbench-0.8/index.html
+popd
+
+pushd scap-workbench-1.0
+mkdir build
+cd build
+cmake ../
+make docs
+mkdir ../../output/scap-workbench-1.0
+cp doc/user_manual.html ../../output/scap-workbench-1.0/index.html
+popd
+
+pushd scap-workbench-1.1
+mkdir -p build
+cd build
+cmake ../
+make docs
+mkdir ../../output/scap-workbench-1.1
+cp doc/user_manual.html ../../output/scap-workbench-1.1/index.html
+popd
+
+pushd scap-workbench-1.2
+mkdir -p build
+cd build
+cmake ../
+make docs
+mkdir ../../output/scap-workbench-1.2
+cp doc/user_manual.html ../../output/scap-workbench-1.2/index.html
+popd
+</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>pushd output/
+zip ../static.open-scap.org.zip -r ./
+popd
+
+echo &quot;Upload the ZIP archive to OpenShift app and run &apos;unzip static.open-scap.org.zip&apos; in the ssh shell&quot;</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>static.open-scap.org.zip</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>true</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>false</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+  </publishers>
+  <buildWrappers/>
+</project>
