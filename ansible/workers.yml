@@ -357,3 +357,12 @@
       dest: /opt/scapval/
       remote_src: yes
     when: (ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7") or ansible_distribution == 'Fedora'
+
+  # Taken from https://stackoverflow.com/questions/33359404/ansible-best-practice-for-maintaining-list-of-sudoers
+  - name: Allow jenkins to call setcap
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^jenkins'
+      line: 'jenkins ALL=(ALL)       NOPASSWD: /sbin/setcap'
+      validate: visudo -cf %s
