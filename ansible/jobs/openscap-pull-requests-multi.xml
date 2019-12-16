@@ -146,7 +146,6 @@ yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlc
       <name>label</name>
       <values>
         <string>fedora</string>
-        <string>rhel7</string>
         <string>rhel8</string>
       </values>
     </hudson.matrix.LabelAxis>
