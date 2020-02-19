@@ -52,6 +52,12 @@ pushd scap-security-guide
 git checkout $GIT_BRANCH
 cd build
 cmake ../
+
+# build source tarball
+make -j $CPU_COUNT package_source
+mv scap-security-guide-*.tar.bz2 ../../
+
+# build the docs
 make DESTDIR=`pwd`/scap-security-guide-install install -j $CPU_COUNT
 mkdir ../../output/ssg-guides
 # TODO include mapping tables
@@ -71,7 +77,7 @@ echo &quot;Upload the ZIP archive to OpenShift app and run &apos;unzip static.op
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>static.open-scap.org.zip</artifacts>
+      <artifacts>static.open-scap.org.zip,scap-security-guide-*.tar.bz2</artifacts>
       <allowEmptyArchive>false</allowEmptyArchive>
       <onlyIfSuccessful>true</onlyIfSuccessful>
       <fingerprint>false</fingerprint>
