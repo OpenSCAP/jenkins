@@ -131,6 +131,7 @@
       - which
       - initscripts
       - chkconfig
+      - libyaml-devel
       state: installed
 
   - name: Ensure OpenSCAP dependencies are installed (Except RHEL8)
