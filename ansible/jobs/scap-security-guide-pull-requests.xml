@@ -36,7 +36,7 @@
       <hudson.plugins.git.UserRemoteConfig>
         <name>origin</name>
         <refspec>+refs/pull/*:refs/remotes/origin/pr/*</refspec>
-        <url>git://github.com/OpenSCAP/scap-security-guide.git</url>
+        <url>git://github.com/ComplianceAsCode/content.git</url>
         <credentialsId>openscap-ci</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
@@ -47,7 +47,16 @@
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
     <submoduleCfg class="list"/>
-    <extensions/>
+    <extensions>
+      <hudson.plugins.git.extensions.impl.SubmoduleOption>
+        <disableSubmodules>false</disableSubmodules>
+        <recursiveSubmodules>true</recursiveSubmodules>
+        <trackingSubmodules>false</trackingSubmodules>
+        <reference></reference>
+        <parentCredentials>false</parentCredentials>
+        <shallow>false</shallow>
+      </hudson.plugins.git.extensions.impl.SubmoduleOption>
+    </extensions>
   </scm>
   <assignedNode>master</assignedNode>
   <canRoam>false</canRoam>
@@ -60,7 +69,7 @@
       <configVersion>3</configVersion>
       <adminlist>shawndwells
 jan-cerny
-mpreisler
+mildas
 dahaic
 yuumasato
 redhatrises
@@ -74,7 +83,7 @@ ggbecker</adminlist>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
       <useGitHubHooks>true</useGitHubHooks>
       <permitAll>false</permitAll>
-      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker lkinser jgwl maltek comps keithkjackson adelton justin-stephenson mildas vojtapolasek evgenyz 70k10 shaneboulden abergmann DominiqueDevinci nkinder mralph-rh jcpunk jhrozek redhat-rmcallis isimluk pschneiders Scronkfinkle konstruktoid JAORMX mrogers950</whitelist>
+      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker lkinser jgwl maltek comps keithkjackson adelton justin-stephenson mildas vojtapolasek evgenyz 70k10 shaneboulden abergmann DominiqueDevinci nkinder mralph-rh jcpunk jhrozek redhat-rmcallis isimluk pschneiders Scronkfinkle konstruktoid JAORMX mrogers950 cyarbrough76 eradot4027 Klaas-</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
