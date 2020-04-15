@@ -137,7 +137,7 @@ yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlc
       <excludedRegions></excludedRegions>
       <extensions>
         <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
-          <commitStatusContext></commitStatusContext>
+          <commitStatusContext>OpenSCAP Jenkins</commitStatusContext>
           <triggeredStatus></triggeredStatus>
           <startedStatus></startedStatus>
           <statusUrl></statusUrl>

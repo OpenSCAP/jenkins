@@ -1,17 +1,9 @@
 <?xml version='1.1' encoding='UTF-8'?>
-<matrix-project plugin="matrix-project@1.14">
+<project>
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <jenkins.model.BuildDiscarderProperty>
-      <strategy class="hudson.tasks.LogRotator">
-        <daysToKeep>7</daysToKeep>
-        <numToKeep>30</numToKeep>
-        <artifactDaysToKeep>-1</artifactDaysToKeep>
-        <artifactNumToKeep>-1</artifactNumToKeep>
-      </strategy>
-    </jenkins.model.BuildDiscarderProperty>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.3">
       <projectUrl>https://github.com/ComplianceAsCode/content/</projectUrl>
       <displayName></displayName>
@@ -36,7 +28,7 @@
       <hudson.plugins.git.UserRemoteConfig>
         <name>origin</name>
         <refspec>+refs/pull/*:refs/remotes/origin/pr/*</refspec>
-        <url>git://github.com/ComplianceAsCode/content.git</url>
+        <url>https://github.com/ComplianceAsCode/content</url>
         <credentialsId>openscap-ci</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
@@ -48,17 +40,12 @@
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
     <submoduleCfg class="list"/>
     <extensions>
-      <hudson.plugins.git.extensions.impl.SubmoduleOption>
-        <disableSubmodules>false</disableSubmodules>
-        <recursiveSubmodules>true</recursiveSubmodules>
-        <trackingSubmodules>false</trackingSubmodules>
-        <reference></reference>
-        <parentCredentials>false</parentCredentials>
-        <shallow>false</shallow>
-      </hudson.plugins.git.extensions.impl.SubmoduleOption>
+      <hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
+        <relativeTargetDir>content</relativeTargetDir>
+      </hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
     </extensions>
   </scm>
-  <assignedNode>master</assignedNode>
+  <assignedNode>fedora</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -104,11 +91,8 @@ ggbecker</adminlist>
       <includedRegions></includedRegions>
       <excludedRegions></excludedRegions>
       <extensions>
-        <org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
-          <overrideGlobal>false</overrideGlobal>
-        </org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
         <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
-          <commitStatusContext>CaC Jenkins build and unit tests</commitStatusContext>
+          <commitStatusContext>content-test-filtering</commitStatusContext>
           <triggeredStatus></triggeredStatus>
           <startedStatus></startedStatus>
           <statusUrl></statusUrl>
@@ -118,64 +102,16 @@ ggbecker</adminlist>
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
-  <axes>
-    <hudson.matrix.LabelAxis>
-      <name>label</name>
-      <values>
-        <string>fedora</string>
-        <string>rhel6</string>
-        <string>rhel7</string>
-        <string>rhel8</string>
-      </values>
-    </hudson.matrix.LabelAxis>
-  </axes>
   <builders>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-# Clean up the build directory to start clean from the start
-rm -rf &quot;$WORKSPACE/build&quot;</command>
-    </hudson.tasks.Shell>
-    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
-      <installationName>InSearchPath</installationName>
-      <workingDir>build</workingDir>
-      <generator>${BUILD_BACKEND}</generator>
-      <sourceDir>.</sourceDir>
-      <buildType>Release</buildType>
-      <cleanBuild>true</cleanBuild>
-      <toolSteps>
-        <hudson.plugins.cmake.BuildToolStep>
-          <args>all -j$CPU_COUNT</args>
-          <vars>DESTDIR=${WORKSPACE}/build/install_test</vars>
-          <withCmake>false</withCmake>
-        </hudson.plugins.cmake.BuildToolStep>
-      </toolSteps>
-    </hudson.plugins.cmake.CmakeBuilder>
-    <hudson.plugins.cmake.CToolBuilder plugin="cmakebuilder@2.6.0">
-      <installationName>InSearchPath</installationName>
-      <workingDir>build</workingDir>
-      <toolArgs>-j $CPU_COUNT
---output-on-failure
--E linkchecker</toolArgs>
-      <toolId>ctest</toolId>
-    </hudson.plugins.cmake.CToolBuilder>
-    <hudson.tasks.Shell>
-      <command>#!/bin/bash
-# Clean up the build directory to save space
-rm -rf &quot;$WORKSPACE/build&quot;</command>
+if [ -z &quot;$ghprbPullId&quot; ]
+then
+     ghprbPullId=${sha1//[!0-9]/}
+fi
+python3 &quot;$WORKSPACE/ctf/content_test_filtering.py&quot; pr --repository &quot;$WORKSPACE/content&quot; ${ghprbPullId}</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
-  <buildWrappers>
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.6.2">
-      <colorMapName>css</colorMapName>
-    </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-    <org.jenkinsci.plugins.buildnamesetter.BuildNameSetter plugin="build-name-setter@1.7.0">
-      <template>${GIT_BRANCH} - #${BUILD_NUMBER} - ${BUILD_STATUS}</template>
-      <runAtStart>true</runAtStart>
-      <runAtEnd>true</runAtEnd>
-    </org.jenkinsci.plugins.buildnamesetter.BuildNameSetter>
-  </buildWrappers>
-  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
-    <runSequentially>false</runSequentially>
-  </executionStrategy>
-</matrix-project>
+  <buildWrappers/>
+</project>
