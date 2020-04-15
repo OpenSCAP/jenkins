@@ -57,19 +57,13 @@
       <cleanBuild>false</cleanBuild>
       <toolSteps>
         <hudson.plugins.cmake.BuildToolStep>
+          <args>-j $CPU_COUNT</args>
+          <withCmake>false</withCmake>
+        </hudson.plugins.cmake.BuildToolStep>
+        <hudson.plugins.cmake.BuildToolStep>
           <args>html-stats -j $CPU_COUNT</args>
           <withCmake>false</withCmake>
         </hudson.plugins.cmake.BuildToolStep>
-      </toolSteps>
-    </hudson.plugins.cmake.CmakeBuilder>
-    <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
-      <installationName>InSearchPath</installationName>
-      <workingDir>build</workingDir>
-      <generator>Unix Makefiles</generator>
-      <sourceDir>.</sourceDir>
-      <buildType>Release</buildType>
-      <cleanBuild>false</cleanBuild>
-      <toolSteps>
         <hudson.plugins.cmake.BuildToolStep>
           <args>html-profile-stats -j $CPU_COUNT</args>
           <withCmake>false</withCmake>
@@ -106,6 +100,48 @@ done
 echo &quot;&lt;/ul&gt;&quot; &gt;&gt; $STATS_DIR/index.html
 echo &quot;&lt;/body&gt;&quot; &gt;&gt; $STATS_DIR/index.html
 echo &quot;&lt;/html&gt;&quot; &gt;&gt; $STATS_DIR/index.html
+
+
+pushd build/guides
+touch index.html
+echo &quot;&lt;html&gt;&quot; &gt; index.html
+echo &quot;&lt;header&gt;&quot; &gt;&gt; index.html
+echo &quot;&lt;h1&gt;Right Click to save the guide and open it locally&lt;/h1&gt;&quot; &gt;&gt; index.html
+echo &quot;&lt;/header&gt;&quot; &gt;&gt; index.html
+echo &quot;&lt;body&gt;&quot; &gt;&gt; index.html
+echo &quot;&lt;ul&gt;&quot; &gt;&gt; index.html
+for guide in ssg-*.html
+do
+    echo &quot;&lt;li&gt;&lt;a href=\&quot;${guide}\&quot; download=\&quot;${guide}\&quot;&gt;${guide}&lt;/a&gt;&lt;/li&gt;&quot; &gt;&gt; index.html
+done
+echo &quot;&lt;/ul&gt;&quot; &gt;&gt; index.html
+echo &quot;&lt;/body&gt;&quot; &gt;&gt; index.html
+echo &quot;&lt;/html&gt;&quot; &gt;&gt; index.html
+popd
+
+cp -rf build/guides $STATS_DIR
+
+
+pushd build/tables
+touch index.html
+echo &quot;&lt;html&gt;&quot; &gt; index.html
+echo &quot;&lt;header&gt;&quot; &gt;&gt; index.html
+echo &quot;&lt;h1&gt;Right Click to save the table and open it locally&lt;/h1&gt;&quot; &gt;&gt; index.html
+echo &quot;&lt;/header&gt;&quot; &gt;&gt; index.html
+echo &quot;&lt;body&gt;&quot; &gt;&gt; index.html
+echo &quot;&lt;ul&gt;&quot; &gt;&gt; index.html
+for table in table-*.html
+do
+    echo &quot;&lt;li&gt;&lt;a href=\&quot;${table}\&quot; download=\&quot;${table}\&quot;&gt;${table}&lt;/a&gt;&lt;/li&gt;&quot; &gt;&gt; index.html
+done
+echo &quot;&lt;/ul&gt;&quot; &gt;&gt; index.html
+echo &quot;&lt;/body&gt;&quot; &gt;&gt; index.html
+echo &quot;&lt;/html&gt;&quot; &gt;&gt; index.html
+popd
+
+
+cp -rf build/tables $STATS_DIR
+
 popd
 
 # Clean up the build directory
@@ -121,6 +157,28 @@ rm -rf &quot;$WORKSPACE/build&quot;</command>
           <reportFiles>index.html</reportFiles>
           <alwaysLinkToLastBuild>false</alwaysLinkToLastBuild>
           <reportTitles></reportTitles>
+          <keepAll>false</keepAll>
+          <allowMissing>false</allowMissing>
+          <includes>**/*</includes>
+          <escapeUnderscores>true</escapeUnderscores>
+        </htmlpublisher.HtmlPublisherTarget>
+        <htmlpublisher.HtmlPublisherTarget>
+          <reportName>HTML Guides</reportName>
+          <reportDir>statistics/guides</reportDir>
+          <reportFiles>index.html</reportFiles>
+          <alwaysLinkToLastBuild>false</alwaysLinkToLastBuild>
+          <reportTitles>Master branch HTML Guides</reportTitles>
+          <keepAll>false</keepAll>
+          <allowMissing>false</allowMissing>
+          <includes>**/*</includes>
+          <escapeUnderscores>true</escapeUnderscores>
+        </htmlpublisher.HtmlPublisherTarget>
+        <htmlpublisher.HtmlPublisherTarget>
+          <reportName>HTML Mapping Tables</reportName>
+          <reportDir>statistics/tables</reportDir>
+          <reportFiles>index.html</reportFiles>
+          <alwaysLinkToLastBuild>false</alwaysLinkToLastBuild>
+          <reportTitles>Master branch HTML Mapping Tables</reportTitles>
           <keepAll>false</keepAll>
           <allowMissing>false</allowMissing>
           <includes>**/*</includes>
