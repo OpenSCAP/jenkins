@@ -70,7 +70,7 @@ ggbecker</adminlist>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
       <useGitHubHooks>true</useGitHubHooks>
       <permitAll>false</permitAll>
-      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker lkinser jgwl maltek comps keithkjackson adelton justin-stephenson mildas vojtapolasek evgenyz 70k10 shaneboulden abergmann DominiqueDevinci nkinder mralph-rh jcpunk jhrozek redhat-rmcallis isimluk pschneiders Scronkfinkle konstruktoid JAORMX mrogers950 cyarbrough76 eradot4027 Klaas- pekramp</whitelist>
+      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker lkinser jgwl maltek comps keithkjackson adelton justin-stephenson mildas vojtapolasek evgenyz 70k10 shaneboulden abergmann DominiqueDevinci nkinder mralph-rh jcpunk jhrozek redhat-rmcallis isimluk pschneiders Scronkfinkle konstruktoid JAORMX mrogers950 cyarbrough76 eradot4027 Klaas- pekramp npoyant anixon-rh crleekwc</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>

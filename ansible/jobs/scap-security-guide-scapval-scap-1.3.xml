@@ -79,6 +79,9 @@
     <hudson.tasks.Shell>
       <command>$WORKSPACE/tests/run_scapval.py --scap-version 1.3 --scapval-path /opt/scapval/scapval-1.3.2.jar --build-dir $WORKSPACE/build</command>
     </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>rm -rf $WORKSPACE/build</command>
+    </hudson.tasks.Shell>
   </builders>
   <publishers/>
   <buildWrappers/>
