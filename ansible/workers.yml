@@ -325,7 +325,7 @@
   - name: Ensure Zanata is installed (Fedora only)
     package:
       name:
-      - zanata-python-client
+      - python3-zanata-client
       state: installed
     when: ansible_distribution == 'Fedora'
 
