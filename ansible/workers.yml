@@ -14,17 +14,17 @@
       name: jenkins
       comment: "Jenkins user"
 
-  - name: Install prerequisites for authorized keys addition (except RHEL8)
+  - name: Install prerequisites for authorized keys addition (RHEL6, RHEL7)
     package:
       name:
       - libselinux-python
-    when: (ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] != "8") or ansible_distribution == 'Fedora'
+    when: ansible_distribution == 'RedHat' and (ansible_distribution_version.split(".")[0] == "6" or ansible_distribution_version.split(".")[0] == "7")
 
-  - name: Install prerequisites for authorized keys addition (RHEL8 only)
+  - name: Install prerequisites for authorized keys addition (RHEL8, Fedora)
     package:
       name:
       - python3-libselinux
-    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
+    when: (ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8") or ansible_distribution == 'Fedora'
 
   # we use the public key to connect to slaves from jenkins master
   - name: Authorize master's jenkins user public key
