@@ -286,19 +286,7 @@
       state: installed
     when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] == "7"
 
-  - name: Ensure OpenSCAP Daemon extra dependencies are installed (Fedora only)
-    package:
-      name:
-      - python-gobject-base
-      - python-gobject
-      - python3-dbus
-      - pygobject3-devel
-      - python3-gobject-base
-      - python3-gobject
-      state: installed
-    when: ansible_distribution == 'Fedora'
-
-  - name: Ensure OpenSCAP Daemon extra dependencies are installed (RHEL8 only)
+  - name: Ensure OpenSCAP Daemon extra dependencies are installed (Fedora, RHEL8)
     package:
       name:
       - python3-dbus
