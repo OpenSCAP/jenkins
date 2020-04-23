@@ -41,32 +41,6 @@
       gpgcheck: yes
     when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "6"
 
-  # RHEL6 optional RPMs are required for yum-cron and -devel packages
-  # we can't use yum_repository ansible module because it doesn't allow
-  # modification of existing repo files, it's mainly for creating new files
-  - name: Enable the RHEL6 server optional RPMs repo
-    ini_file:
-      path: /etc/yum.repos.d/redhat-rhui.repo
-      section: rhui-REGION-rhel-server-releases-optional
-      option: enabled
-      value: yes
-      create: no
-      state: present
-    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "6"
-
-  # RHEL7 optional RPMs are required for yum-cron and -devel packages
-  # we can't use yum_repository ansible module because it doesn't allow
-  # modification of existing repo files, it's mainly for creating new files
-  - name: Enable the RHEL7 server optional RPMs repo
-    ini_file:
-      path: /etc/yum.repos.d/redhat-rhui.repo
-      section: rhui-REGION-rhel-server-optional
-      option: enabled
-      value: yes
-      create: no
-      state: present
-    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7"
-
   - name: Install pip
     package:
       name:
