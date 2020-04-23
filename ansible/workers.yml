@@ -256,14 +256,14 @@
     pip:
       name:
       - git+https://github.com/linkcheck/linkchecker.git
-    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] != "6"
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] == "8"
 
-  # RHEL may not have pytest
-  - name: Ensure pytest coverage support is installed (RHEL only)
-    pip:
+  - name: Ensure pytest coverage support is installed (RHEL 7 only)
+    package:
       name:
       - pytest
-    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] >= "6"
+      state: installed
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7"
 
   - name: Ensure json2html is installed so it can convert profile statistics to HTML
     pip:
