@@ -72,6 +72,14 @@
       name:
       - python-pip
       state: installed
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] <= "7"
+
+  - name: Install pip3
+    package:
+      name:
+      - python3-pip
+      state: installed
+    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] >= "8"
 
   - name: Install cronie
     package:
