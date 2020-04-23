@@ -45,7 +45,7 @@
       </hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
     </extensions>
   </scm>
-  <assignedNode>fedora</assignedNode>
+  <assignedNode>jenkins-worker-fedora-1</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -70,7 +70,7 @@ ggbecker</adminlist>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
       <useGitHubHooks>true</useGitHubHooks>
       <permitAll>false</permitAll>
-      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker lkinser jgwl maltek comps keithkjackson adelton justin-stephenson mildas vojtapolasek evgenyz 70k10 shaneboulden abergmann DominiqueDevinci nkinder mralph-rh jcpunk jhrozek redhat-rmcallis isimluk pschneiders Scronkfinkle konstruktoid JAORMX mrogers950 cyarbrough76 eradot4027 Klaas- pekramp npoyant anixon-rh crleekwc</whitelist>
+      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker lkinser jgwl maltek comps keithkjackson adelton justin-stephenson mildas vojtapolasek evgenyz 70k10 shaneboulden abergmann DominiqueDevinci nkinder mralph-rh jcpunk jhrozek redhat-rmcallis isimluk pschneiders Scronkfinkle konstruktoid JAORMX mrogers950 cyarbrough76 eradot4027 Klaas- pekramp npoyant anixon-rh crleekwc jonathan-sturges kharyam</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
@@ -105,11 +105,14 @@ ggbecker</adminlist>
   <builders>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
+tmp_dir=&quot;$(mktemp -d)&quot;
+git clone https://github.com/mildas/content-test-filtering &quot;$tmp_dir&quot;
 if [ -z &quot;$ghprbPullId&quot; ]
 then
      ghprbPullId=${sha1//[!0-9]/}
 fi
-python3 &quot;$WORKSPACE/ctf/content_test_filtering.py&quot; pr --repository &quot;$WORKSPACE/content&quot; ${ghprbPullId}</command>
+python3 &quot;$tmp_dir/content_test_filtering.py&quot; pr --repository &quot;$WORKSPACE/content&quot; ${ghprbPullId}
+rm -rf &quot;$tmp_dir&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
