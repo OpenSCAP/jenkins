@@ -5,6 +5,11 @@
   become_method: sudo
 
   tasks:
+  - name: upgrade all packages
+    yum:
+      name: '*'
+      state: latest
+
   - name: Set hostname
     hostname:
       name: "{{ inventory_hostname }}"
