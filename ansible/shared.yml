@@ -71,23 +71,6 @@
       enabled: yes
       state: started
 
-# despite being called yum-cron this works on RHEL and Fedora
-  - name: Install yum-cron
-    package:
-      name: yum-cron
-      state: present
-
-  - name: Copy yum-cron.conf over
-    copy:
-      src: shared_cfg/yum-cron.conf
-      dest: /etc/yum/yum-cron.conf
-
-  - name: Enable yum-cron service
-    service:
-      name: yum-cron
-      enabled: yes
-      state: started
-
   - name: Install tuned (performance tuning)
     package:
       name: tuned
@@ -122,6 +105,49 @@
       regexp: "^#?PasswordAuthentication"
       line: "PasswordAuthentication no"
     notify: restart sshd
+
+  - name: Install dnf-automatic package
+    package:
+      name: dnf-automatic
+      state: installed
+    when: ansible_facts['distribution'] == "Fedora" or (ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] >= "8")
+
+  - name: Apply updates when they are available
+    ini_file:
+      path: /etc/dnf/automatic.conf
+      section: commands
+      option: apply_updates
+      value: 'yes'
+    when: ansible_facts['distribution'] == "Fedora" or (ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] >= "8")
+
+  - name: Enable dnf-automatic timer
+    service:
+      name: dnf-automatic.timer
+      state: started
+      enabled: yes
+    when: ansible_facts['distribution'] == "Fedora" or (ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] >= "8")
+
+  tasks:
+  - name: Install yum-cron package
+    package:
+      name: yum-cron
+      state: installed
+    when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] <= "7"
+
+  - name: Apply updates when they are available
+    ini_file:
+      path: /etc/yum/yum-cron.conf
+      section: commands
+      option: apply_updates
+      value: 'yes'
+    when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] <= "7"
+
+  - name: Enable yum-cron service
+    service:
+      name: yum-cron
+      state: started
+      enabled: yes
+    when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] <= "7"
 
   handlers:
   - name: restart sshd
