@@ -277,6 +277,14 @@
       - yamllint
     when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] >= "7"
 
+  - name: Ensure content-test-filtering dependencies are installed
+    pip:
+      name:
+      - gitpython
+      - xmldiff
+      - deepdiff
+    when: ansible_distribution == 'Fedora'
+
   - name: Ensure OpenSCAP Daemon dependencies are installed (RHEL7 only)
     package:
       name:
