@@ -60,12 +60,33 @@
   - name: Add the Red Hat CodeReady Linux Builder for RHEL 8 x86_64
     rhsm_repository:
       name: codeready-builder-for-rhel-8-x86_64-rpms
-    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
+    when: provider != 'amazon' and ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
+
+  - name: Add the Red Hat CodeReady Linux Builder for RHEL 8 x86_64 (Amazon systems)
+    ini_file:
+      path: /etc/yum.repos.d/redhat-rhui.repo
+      section: codeready-builder-for-rhel-8-rhui-rpms
+      option: enabled
+      value: '1'
+    when: provider == 'amazon' and ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
+
+  - name: Add RHEL7 Server Optional repo
+    rhsm_repository:
+      name: rhel-7-server-optional-rpms
+    when: provider != 'amazon' and ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7"
+
+  - name: Add RHEL7 Server Optional repo (Amazon systems)
+    ini_file:
+      path: /etc/yum.repos.d/redhat-rhui.repo
+      section: rhel-7-server-rhui-optional-rpms
+      option: enabled
+      value: '1'
+    when: provider == 'amazon' and ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7"
 
   - name: Add the Red Hat Ansible Engine 2 for RHEL 8 x86_64
     rhsm_repository:
       name: ansible-2-for-rhel-8-x86_64-rpms
-    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
+    when: provider != 'amazon' and ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
 
   - name: Ensure general build dependencies are installed
     package:
