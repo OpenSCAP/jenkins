@@ -134,19 +134,19 @@
       - libyaml-devel
       state: installed
 
-  - name: Ensure OpenSCAP dependencies are installed (Except RHEL8)
+  - name: Ensure OpenSCAP dependencies are installed (RHEL6, RHEL7)
     package:
       name:
       - python-devel
       state: installed
-    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] != "8"
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] <= "7"
 
-  - name: Ensure OpenSCAP dependencies are installed (RHEL8 only)
+  - name: Ensure OpenSCAP dependencies are installed (RHEL8, Fedora)
     package:
       name:
       - python3-devel
       state: installed
-    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
+    when: (ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8") or ansible_distribution == 'Fedora'
 
   - name: Ensure procps is installed (OpenSCAP dependency) (RHEL6 only)
     package:
@@ -206,8 +206,6 @@
   - name: Ensure SCAP Security Guide dependencies are installed (Fedora only)
     package:
       name:
-      - python2-jinja2  # needed for the new SSG yaml/jinja2 port
-      - python2-pytest
       - python3-pytest  # needed for unit tests + coverage
       - python3-jinja2
       - python3-PyYAML
@@ -246,7 +244,6 @@
       - python3-pytest  # needed for unit tests + coverage
       - python3-jinja2
       - python3-PyYAML
-      - python3-pip
       state: installed
     when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
 
