@@ -303,7 +303,7 @@
       - gobject-introspection
       - pygobject2-devel
       state: installed
-    when: ansible_distribution != 'RedHat' or ansible_distribution_version.split(".")[0] == "7"
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7"
 
   - name: Ensure OpenSCAP Daemon extra dependencies are installed (Fedora, RHEL8)
     package:
