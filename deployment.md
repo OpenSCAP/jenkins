@@ -36,6 +36,17 @@ In case of RHEL, enable the `rhel-7-server-extras-rpms` and `rhel-7-server-optio
 You might want to use Ansible Playbooks, saved in ```./ansible``` directory.
 Please see ```README.md``` for details.
 
+However, there can be issues that can cause the Ansible Playbooks to fail.
+
+* If you don't configure master but only a worker, you have to have the `jenkins` user public key ready on your laptop for the Playbooks to find it.  Copy the key from `/var/lib/jenkins/.ssh/id_rsa.pub` on master node and save it to `<your_git_folder>/jenkins/ansible/generated_bits/master_id_rsa.pub`.
+* If a new version of RHEL is released, you need to review the whole playbook, as some Ansible tasks are enabled only on a specific RHEL version and you might need to change the "when" statement of these tasks.
+* It is necessary to run `yum update` before applying the playbook. It's particularly important on Amazon, because AMIs are available only in major release versions. For example, when setting up RHEL 7, you will get RHEL 7.0 AMI. But RHEL 7.0 has old crypto libraries that will cause every download from the internet to fail, therefore the Playbook won't be able to install any package. Updating the system solves the problem.
+* RHEL Workers running in Amazon don't use normal subscription. You can't use subscription manager or Ansible tasks that use subscription manager. Instead, RHEL workers in Amazon use RHUI. You can install packages normally using yum/dnf without subscribing. However, the repositories have different names and different IDs. You can enable CRB or optional repos by editing `/etc/yum.repos.d/`, but you need to orient yourself by descriptions.
+* Fedora evolves quickly and the Playbooks can contain old or obsolete of packages that don't exist on the latest Fedora. Try to find their alternatives.
+* PIP on RHEL 6 fails to install the latest Python packages. Try to install the python packages packaged in distribution instead. Alternatively, modify the tests run in CI to skip the test cases that need these Python packages.
+
+If possible, please modify the Playbooks and submit a PR against this repository.
+
 ### Important files & paths on Jenkins master
  - **/var/lib/jenkins/**
 	- Complete configuration folder storage
