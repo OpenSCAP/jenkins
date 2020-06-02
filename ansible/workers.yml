@@ -165,6 +165,7 @@
   - name: Ensure OpenSCAP dependencies are installed (RHEL8, Fedora)
     package:
       name:
+      - strace
       - python3-devel
       state: installed
     when: (ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8") or ansible_distribution == 'Fedora'
