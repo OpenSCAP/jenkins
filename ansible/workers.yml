@@ -365,13 +365,13 @@
 
   - name: Download SCAPVal tool (RHEL7 and Fedora only)
     get_url:
-      url: https://csrc.nist.gov/CSRC/media/Projects/Security-Content-Automation-Protocol/tools/scap/1.3/SCAP-Content-Validation-Tool-1.3.2.zip
+      url: https://csrc.nist.gov/CSRC/media/Projects/Security-Content-Automation-Protocol/tools/scap/1.3/SCAP-Content-Validation-Tool-1.3.5.zip
       dest: /tmp
     when: (ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7") or ansible_distribution == 'Fedora'
 
   - name: Extract SCAPVal tool (RHEL7 and Fedora only)
     unarchive:
-      src: /tmp/SCAP-Content-Validation-Tool-1.3.2.zip
+      src: /tmp/SCAP-Content-Validation-Tool-1.3.5.zip
       dest: /opt/scapval/
       remote_src: yes
     when: (ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7") or ansible_distribution == 'Fedora'
