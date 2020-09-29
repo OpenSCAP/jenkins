@@ -377,10 +377,17 @@
     when: (ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "7") or ansible_distribution == 'Fedora'
 
   # Taken from https://stackoverflow.com/questions/33359404/ansible-best-practice-for-maintaining-list-of-sudoers
-  - name: Allow jenkins to call setcap
+  - name: Allow jenkins to call setcap, rm, chmod, chown, cgroup-tools
     lineinfile:
       dest: /etc/sudoers
       state: present
       regexp: '^jenkins'
-      line: 'jenkins ALL=(ALL)       NOPASSWD: /sbin/setcap'
+      line: 'jenkins ALL=(ALL)       NOPASSWD: /sbin/setcap, /usr/bin/rm, /usr/bin/chmod, /usr/bin/chown, /usr/bin/cgcreate, /usr/bin/cgset, /usr/bin/cgdelete'
       validate: visudo -cf %s
+
+  - name: Install dependencies for openscap-memory-consumption Jenkins job (RHEL8 only)
+    package:
+      name:
+      - libcgroup-tools
+      state: installed
+    when: ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8"
