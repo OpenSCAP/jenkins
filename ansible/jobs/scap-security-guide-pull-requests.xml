@@ -83,7 +83,7 @@ ggbecker</adminlist>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
       <useGitHubHooks>true</useGitHubHooks>
       <permitAll>false</permitAll>
-      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker lkinser jgwl maltek comps keithkjackson adelton justin-stephenson mildas vojtapolasek evgenyz 70k10 shaneboulden abergmann DominiqueDevinci nkinder mralph-rh jcpunk jhrozek redhat-rmcallis isimluk pschneiders Scronkfinkle konstruktoid JAORMX mrogers950 cyarbrough76 eradot4027 Klaas- pekramp npoyant anixon-rh crleekwc jonathan-sturges kharyam</whitelist>
+      <whitelist> rchayes iokomin matusmarhefka tedbrunell mildass aghassemlouei ggbecker lkinser jgwl maltek comps keithkjackson adelton justin-stephenson mildas vojtapolasek evgenyz 70k10 shaneboulden abergmann DominiqueDevinci nkinder mralph-rh jcpunk jhrozek redhat-rmcallis isimluk pschneiders Scronkfinkle konstruktoid JAORMX mrogers950 cyarbrough76 eradot4027 Klaas- pekramp npoyant anixon-rh crleekwc jonathan-sturges kharyam carlosmmatos</whitelist>
       <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
@@ -117,7 +117,7 @@ ggbecker</adminlist>
       </extensions>
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
   </triggers>
-  <concurrentBuild>false</concurrentBuild>
+  <concurrentBuild>true</concurrentBuild>
   <axes>
     <hudson.matrix.LabelAxis>
       <name>label</name>
@@ -144,7 +144,7 @@ rm -rf &quot;$WORKSPACE/build&quot;</command>
       <cleanBuild>true</cleanBuild>
       <toolSteps>
         <hudson.plugins.cmake.BuildToolStep>
-          <args>all -j$CPU_COUNT</args>
+          <args>all -j2</args>
           <vars>DESTDIR=${WORKSPACE}/build/install_test</vars>
           <withCmake>false</withCmake>
         </hudson.plugins.cmake.BuildToolStep>
