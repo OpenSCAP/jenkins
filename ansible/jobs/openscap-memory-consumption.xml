@@ -41,7 +41,7 @@
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>
   </scm>
-  <assignedNode>rhel8</assignedNode>
+  <assignedNode>rhel7 || rhel8</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
