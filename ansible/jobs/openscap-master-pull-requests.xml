@@ -171,7 +171,7 @@ yuumasato rsprudencio GautamSatish dahaic Hexadorsimal matusmarhefka kjankov jlc
       <installationName>InSearchPath</installationName>
       <workingDir>build/</workingDir>
       <sourceDir>.</sourceDir>
-      <buildType>Debug</buildType>
+      <buildType>RelWithDebInfo</buildType>
       <cleanBuild>true</cleanBuild>
       <toolSteps>
         <hudson.plugins.cmake.BuildToolStep>

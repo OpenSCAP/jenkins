@@ -56,7 +56,7 @@
     <hudson.plugins.cmake.CmakeBuilder plugin="cmakebuilder@2.6.0">
       <installationName>InSearchPath</installationName>
       <workingDir>build</workingDir>
-      <buildType>Debug</buildType>
+      <buildType>RelWithDebInfo</buildType>
       <cleanBuild>true</cleanBuild>
       <toolSteps>
         <hudson.plugins.cmake.BuildToolStep>
