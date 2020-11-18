@@ -47,7 +47,7 @@
       <installationName>InSearchPath</installationName>
       <workingDir>build/</workingDir>
       <toolArgs>-DENABLE_PROBES=FALSE</toolArgs>
-      <buildType>Debug</buildType>
+      <buildType>RelWithDebInfo</buildType>
       <cleanBuild>false</cleanBuild>
     </hudson.plugins.cmake.CmakeBuilder>
     <hudson.tasks.Shell>
