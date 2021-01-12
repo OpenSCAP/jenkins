@@ -149,6 +149,19 @@
       enabled: yes
     when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] <= "7"
 
+  # This is a temporary fix to avoid filling up the disc with failed builds
+  # The task is configured to run every Saturday at 21:00 EST
+  - name: Clean up build dirs regularly
+    cron:
+      name: "Clean up build dirs regularly"
+      minute: "0"
+      hour: "21"
+      user: jenkins
+      weekday: "6"
+      job: "rm -rf $(find /home/jenkins/workspace/ -mindepth 1 -maxdepth 2 -name build)"
+    tags:
+      - cron_cleanup_build_dirs
+
   handlers:
   - name: restart sshd
     service: name=sshd state=restarted
