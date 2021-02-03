@@ -167,6 +167,7 @@
       name:
       - strace
       - python3-devel
+      - xmlsec1-openssl-devel
       state: installed
     when: (ansible_distribution == 'RedHat' and ansible_distribution_version.split(".")[0] == "8") or ansible_distribution == 'Fedora'
 
